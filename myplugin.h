@@ -8,7 +8,10 @@
 #include "toolframework/itoolentity.h"
 
 #include "playerdeathevent.h"
-#include "playerchatevent.h"
+#include "playersayevent.h"
+#include "playerconnectevent.h"
+#include "playerdisconnectevent.h"
+#include "roundstartevent.h"
 
 class MyPlugin : public IServerPluginCallbacks
 {

@@ -4,23 +4,14 @@ extern CGlobalVars *globalVars;
 extern IVEngineServer *vEngineServer;
 extern IServerGameEnts *serverGameEnts;
 
-struct User
-{
-	int userid = 0;
-	int team = 0;
-	bool isbot = false;	
-};
-
 void RoundStartEvent::FireGameEvent(IGameEvent *event)
 {
 	unsigned short humansTeamT = 0, botsTeamT = 0, humansTeamCT = 0, botsTeamCT = 0;
-	//int botsTeamTUserId[globalVars->maxClients], botsTeamCTUserId[globalVars->maxClients]; 
 	for (unsigned short i = 1; i <= globalVars->maxClients; i++)
 	{
 		edict_t *playerEdict = globalVars->pEdicts + i;
 		if (playerEdict && !playerEdict->IsFree() && strcmp(playerEdict->GetClassName(), "player") == 0)
 		{
-			//int userid = vEngineServer->GetPlayerUserId(playerEdict);
 			CBaseEntity *playerEntity = serverGameEnts->EdictToBaseEntity(playerEdict);
 			if (playerEntity)
 			{
@@ -30,12 +21,10 @@ void RoundStartEvent::FireGameEvent(IGameEvent *event)
 				{
 					if (team == COUNTER_TERRORIST)
 					{
-						//botsTeamCTUserId[botsTeamCT] = userid;
 						botsTeamCT++;
 					}
 					else if (team == TERRORIST)
 					{
-						//botsTeamTUserId[botsTeamT] = userid;
 						botsTeamT++;
 					}
 				}
@@ -53,10 +42,7 @@ void RoundStartEvent::FireGameEvent(IGameEvent *event)
 			}
 		}
 	}
-	Msg("Number of Bots CT is %d.\n", botsTeamCT);
-	Msg("Number of humans CT is %d.\n", humansTeamCT);
-	Msg("Number of Bots T is %d.\n", botsTeamT);
-	Msg("Number of humans T is %d.\n", humansTeamT);
+
 	this->HandleNumberOfBot(humansTeamCT, botsTeamCT, COUNTER_TERRORIST);
 	this->HandleNumberOfBot(humansTeamT, botsTeamT, TERRORIST);
 }
@@ -83,13 +69,11 @@ void RoundStartEvent::HandleNumberOfBot(unsigned short humans, unsigned short bo
 	if (humans <= 5)
 	{
 		unsigned short numberBotsAllow = 5 - humans;
-		Msg("NumberBotsAllow %d. Team %d.\n", numberBotsAllow, team);
 		if (bots <= numberBotsAllow)
 		{
 			for (unsigned short i = bots; i < numberBotsAllow; i++)
 			{
 				vEngineServer->ServerCommand(cmdBotAdd);
-				//vEngineServer->CreateFakeClient("BOT");
 				Msg("ADDDDDD.\n");
 			}
 		}

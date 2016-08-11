@@ -9,7 +9,10 @@ IServerTools *serverTools = NULL;
 IServerPluginHelpers *serverPluginHelpers = NULL;
 
 PlayerDeathEvent *playerDeathEvent = NULL;
-PlayerChatEvent *playerChatEvent = NULL;
+PlayerSayEvent *playerSayEvent = NULL;
+PlayerConnectEvent *playerConnectEvent = NULL;
+PlayerDisconnectEvent *playerDisconnectEvent = NULL;
+RoundStartEvent *roundStartEvent = NULL;
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
 {
@@ -60,7 +63,10 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 	}
 
 	playerDeathEvent = new PlayerDeathEvent();
-	playerChatEvent = new PlayerChatEvent();
+	playerSayEvent = new PlayerSayEvent();
+	playerConnectEvent = new PlayerConnectEvent();
+	playerDisconnectEvent = new PlayerDisconnectEvent();
+	roundStartEvent = new RoundStartEvent();
 
 	return true;
 }
@@ -69,8 +75,14 @@ void MyPlugin::Unload()
 {
 	gameEventManager2->RemoveListener(playerDeathEvent);
 	delete playerDeathEvent;
-	gameEventManager2->RemoveListener(playerChatEvent);
-	delete playerChatEvent;
+	gameEventManager2->RemoveListener(playerSayEvent);
+	delete playerSayEvent;
+	gameEventManager2->RemoveListener(playerConnectEvent);
+        delete playerConnectEvent;
+	gameEventManager2->RemoveListener(playerDisconnectEvent);
+        delete playerDisconnectEvent;
+	gameEventManager2->RemoveListener(roundStartEvent);
+        delete roundStartEvent;
 }
 
 void MyPlugin::Pause()
@@ -91,7 +103,10 @@ const char *MyPlugin::GetPluginDescription()
 void MyPlugin::LevelInit(char const *pMapName)
 {
 	gameEventManager2->AddListener(playerDeathEvent, "player_death", true);
-	gameEventManager2->AddListener(playerChatEvent, "player_chat", true);
+	gameEventManager2->AddListener(playerSayEvent, "player_say", true);
+	gameEventManager2->AddListener(playerConnectEvent, "player_connect", true);
+	gameEventManager2->AddListener(playerDisconnectEvent, "player_disconnect", true);
+	gameEventManager2->AddListener(roundStartEvent, "round_start", true);
 }
 
 void MyPlugin::ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
@@ -107,7 +122,10 @@ void MyPlugin::GameFrame(bool simulating)
 void MyPlugin::LevelShutdown()
 {
 	gameEventManager2->RemoveListener(playerDeathEvent);
-	gameEventManager2->RemoveListener(playerChatEvent);
+	gameEventManager2->RemoveListener(playerSayEvent);
+	gameEventManager2->RemoveListener(playerConnectEvent);
+	gameEventManager2->RemoveListener(playerDisconnectEvent);
+	gameEventManager2->RemoveListener(roundStartEvent);
 }
 
 void MyPlugin::OnQueryCvarValueFinished(QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue)
@@ -133,26 +151,22 @@ PLUGIN_RESULT MyPlugin::ClientConnect(bool *bAllowConnect, edict_t *pEntity, con
 
 void MyPlugin::ClientFullyConnect(edict_t *pEntity)
 {
-	Msg("ClientFullyConnect\n");
-	Msg("%s\n\n", pEntity->GetClassName());
+
 }
 
 void MyPlugin::ClientPutInServer(edict_t *entity, const char *playername)
 {
-	Msg("ClientPutInServer\n");
-	Msg("%s\n\n", entity->GetClassName());
+
 }
 
 void MyPlugin::ClientActive(edict_t *pEntity)
 {
-	Msg("ClientActive\n");
-	Msg("%s\n\n", pEntity->GetClassName());	
+
 }
 
 void MyPlugin::ClientDisconnect(edict_t *pEntity)
 {
-	Msg("ClientDisconnect\n");
-	Msg("%s\n\n", pEntity->GetClassName());
+
 }
 
 void MyPlugin::SetCommandClient(int index)
