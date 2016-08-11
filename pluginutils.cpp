@@ -3,6 +3,11 @@
 extern CGlobalVars *globalVars;
 extern IVEngineServer *vEngineServer;
 
+int m_iTeamNum_off;
+int m_iPendingTeamNum_off;
+int m_fFlags_off;
+int m_iHealth_off;
+
 bool init_CBaseEntity_Props(SendTable *st)
 {
 	Msg("Class CBaseEntity.\n");
@@ -53,8 +58,15 @@ bool init_CBasePlayer_Props(SendTable *st)
 			num++;
 			continue;
 		}
+		
+		if (strcmp(propName, "m_iHealth") == 0)
+		{
+			m_iHealth_off = sp->GetOffset();
+			num++;
+			continue;
+		}
 	}
-	if (num == 1)
+	if (num == 2)
 	{
 		return true;
 	}

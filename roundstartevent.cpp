@@ -4,6 +4,10 @@ extern CGlobalVars *globalVars;
 extern IVEngineServer *vEngineServer;
 extern IServerGameEnts *serverGameEnts;
 
+extern int m_iTeamNum_off;
+extern int m_iPendingTeamNum_off;
+extern int m_fFlags_off;
+
 void RoundStartEvent::FireGameEvent(IGameEvent *event)
 {
 	unsigned short humansTeamT = 0, botsTeamT = 0, humansTeamCT = 0, botsTeamCT = 0;
