@@ -13,7 +13,6 @@ class RoundStartEvent : public IGameEventListener2
 public:
 	void FireGameEvent(IGameEvent *event);
 	int GetEventDebugID();
-	void HandleNumberOfBot(unsigned short humans, unsigned short bots, int team);
 };
 
 #endif // ROUNDSTARTEVENT_H

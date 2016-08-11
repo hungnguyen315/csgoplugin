@@ -43,8 +43,8 @@ void RoundStartEvent::FireGameEvent(IGameEvent *event)
 		}
 	}
 
-	this->BalanceNumberOfBots(humansTeamCT, botsTeamCT, COUNTER_TERRORIST);
-	this->BalanceNumberOfBots(humansTeamT, botsTeamT, TERRORIST);
+	BalanceNumberOfBots(humansTeamCT, botsTeamCT, COUNTER_TERRORIST);
+	BalanceNumberOfBots(humansTeamT, botsTeamT, TERRORIST);
 }
 
 int RoundStartEvent::GetEventDebugID()
