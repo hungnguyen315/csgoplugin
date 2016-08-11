@@ -9,13 +9,13 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 	char *cmdBotKick = new char[12];
 	if (team == COUNTER_TERRORIST)
 	{
-		strcpy(cmdBotAdd, "bot_add ct\n");
-		strcpy(cmdBotKick, "bot_kick ct\n");
+		memcpy(cmdBotAdd, "bot_add ct\n");
+		memcpy(cmdBotKick, "bot_kick ct\n");
 	}
 	else if (team == TERRORIST)
 	{
-		strcpy(cmdBotAdd, "bot_add t\n");
-		strcpy(cmdBotKick, "bot_kick t\n");
+		memcpy(cmdBotAdd, "bot_add t\n");
+		memcpy(cmdBotKick, "bot_kick t\n");
 	}
 	else
 	{
@@ -54,6 +54,6 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 		}
 	}
 	
-	delete [] cmdBotAdd;
-	delete [] cmdBotKick;
+	delete[] cmdBotAdd;
+	delete[] cmdBotKick;
 }
