@@ -8,7 +8,7 @@ PLUGIN_NAME = myplugin
 # Plugin files and directories
 ####################################################
 
-CC = g++
+CC = gcc
 CLINK = gcc
 HL2SDK_DIR = /root/hl2sdk-csgo
 SRCDS_DIR = /home/steam/steamcmd/csgods
@@ -19,9 +19,6 @@ SRCDS_DIR = /home/steam/steamcmd/csgods
 
 ARCH_CFLAGS = -mtune=i486 -march=pentium3 -mmmx -msse
 BASE_CFLAGS = -D_LINUX -DPOSIX -DCOMPILER_GCC \
-#-Wall -Wno-non-virtual-dtor -Wno-overloaded-virtual \
-#-Werror -fPIC -fno-exceptions -fno-rtti -fno-strict-aliasing \
-#-Wno-delete-non-virtual-dtor -D_finite=finite -D_strlen=strlen
 -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
 -D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -Wall -Werror \
 -Wno-overloaded-virtual -Wno-switch -Wno-unused -Wno-non-virtual-dtor -fno-exceptions -fno-rtti \
@@ -53,12 +50,6 @@ INCLUDES = -I$(HL2SDK_DIR)/public -I$(HL2SDK_DIR)/public/engine -I$(HL2SDK_DIR)/
 
 CFLAGS = $(ARCH_CFLAGS) $(OPT_FLAGS) $(BASE_CFLAGS) $(GCC4_FLAGS)
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
-
-
-#CFLAGS += -DSE_EPISODEONE=1 -DSE_DARKMESSIAH=2 -DSE_ORANGEBOX=3 -DSE_BLOODYGOODTIME=4 -DSE_EYE=5 \
--DSE_CSS=6 -DSE_ORANGEBOXVALVE=7 -DSE_LEFT4DEAD=8 -DSE_LEFT4DEAD2=9 -DSE_ALIENSWARM=10 \
--DSE_PORTAL2=11 -DSE_CSGO=12
-#CFLAGS += -DSOURCE_ENGINE=12
 
 %.o: %.cpp
 	$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) -o $@ $<
