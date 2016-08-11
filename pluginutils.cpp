@@ -3,9 +3,46 @@
 extern CGlobalVars *globalVars;
 extern IVEngineServer *vEngineServer;
 
+bool init_CBaseEntity_Props(SendTable* st)
+{
+	int num = 0;
+	for (int i = 0; i < st->m_nProps; i++)
+	{
+		SendProp *sp = st->GetProp(i);
+		const char *propName = sp->GetName();
+		if (strcmp(propName, "m_iTeamNum") == 0)
+		{
+			m_iTeamNum_off = sp->GetOffset();
+			num++;
+			continue;
+		}
+		
+		if (strcmp(propName, "m_iPendingTeamNum") == 0)
+		{
+			m_iPendingTeamNum_off = sp->GetOffset();
+			num++;
+			continue;
+		}
+		
+		if (strcmp(propName, "m_fFlags") == 0)
+		{
+			m_fFlags_off = sp->GetOffset();
+			num++;
+			continue;
+		}
+	}
+	if (num == 2)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 {
-	Msg("Number of bots team %d is %d.\n", team, bots);
 	if (humans <= 5)
 	{
 		unsigned short numberBotsAllow = 5 - humans;

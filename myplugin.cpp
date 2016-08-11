@@ -7,6 +7,7 @@ IServerGameEnts *serverGameEnts = NULL;
 CGlobalVars *globalVars = NULL;
 IServerTools *serverTools = NULL;
 IServerPluginHelpers *serverPluginHelpers = NULL;
+IServerGameDLL *serverGameDLL = NULL;
 
 PlayerDeathEvent *playerDeathEvent = NULL;
 PlayerSayEvent *playerSayEvent = NULL;
@@ -16,6 +17,13 @@ RoundStartEvent *roundStartEvent = NULL;
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
 {
+	serverGameDLL = (IServerGameDLL *)gameServerFactory(INTERFACEVERSION_SERVERGAMEDLL, NULL);
+	if (!serverGameDLL)
+	{
+		Warning("Unable to load IServerGameDLL.\n");
+		return false;
+	}
+
 	serverGameEnts = (IServerGameEnts *)gameServerFactory(INTERFACEVERSION_SERVERGAMEENTS, NULL);
 	if (!serverGameEnts)
 	{
@@ -111,7 +119,21 @@ void MyPlugin::LevelInit(char const *pMapName)
 
 void MyPlugin::ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 {
-	
+	ServerClass *serverClass = serverGameDLL->GetAllServerClasses();
+	while (serverClass)
+	{
+		const char *className = serverClass->GetName();
+		if (strcmp(className, "CBaseEntity") == 0)
+		{
+			SendTable *st = serverClass->m_pTable;
+			for (int i = 0; i < st->m_nProps; i++)
+			{
+				SendProp *sp = st->GetProp(i);
+				Msg("Prop name: %s. Prop Offset: %d.\n", sp->GetName(), sp->GetOffset());
+			}
+		}
+		serverClass = serverClass->m_pNext;
+	}	
 }
 
 void MyPlugin::GameFrame(bool simulating)
