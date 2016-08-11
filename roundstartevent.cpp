@@ -15,8 +15,8 @@ void RoundStartEvent::FireGameEvent(IGameEvent *event)
 			CBaseEntity *playerEntity = serverGameEnts->EdictToBaseEntity(playerEdict);
 			if (playerEntity)
 			{
-				int team = *(int *)((char *)playerEntity + m_iTeamNum_addr);
-				int flags = *(int *)((char *)playerEntity + m_fFlags_addr);
+				int team = *(int *)((char *)playerEntity + m_iTeamNum_off);
+				int flags = *(int *)((char *)playerEntity + m_fFlags_off);
 				if (flags & FL_FAKECLIENT)
 				{
 					if (team == COUNTER_TERRORIST)
