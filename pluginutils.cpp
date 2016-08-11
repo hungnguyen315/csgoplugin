@@ -7,12 +7,13 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 {
 	char cmdBotAdd[11];
 	char cmdBotKick[12];
-	if (team == 3)
+	if (team == COUNTER_TERRORIST)
 	{
 		strcpy(cmdBotAdd, "bot_add ct\n");
 		strcpy(cmdBotKick, "bot_kick ct\n");
+		Msg("come here.\n");
 	}
-	else if (team == 2)
+	else if (team == TERRORIST)
 	{
 		strcpy(cmdBotAdd, "bot_add t\n");
 		strcpy(cmdBotKick, "bot_kick t\n");
