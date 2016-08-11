@@ -2,7 +2,7 @@
 
 void PlayerDeathEvent::FireGameEvent(IGameEvent *event)
 {
-	Msg("Player dead\n");
+
 }
 
 int PlayerDeathEvent::GetEventDebugID()
