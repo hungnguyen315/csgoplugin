@@ -74,7 +74,6 @@ void RoundStartEvent::HandleNumberOfBot(unsigned short humans, unsigned short bo
 			for (unsigned short i = bots; i < numberBotsAllow; i++)
 			{
 				vEngineServer->ServerCommand(cmdBotAdd);
-				Msg("ADDDDDD.\n");
 			}
 		}
 		else
