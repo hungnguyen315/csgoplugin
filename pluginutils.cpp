@@ -5,13 +5,12 @@ extern IVEngineServer *vEngineServer;
 
 void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 {
-	char cmdBotAdd[11];
-	char cmdBotKick[12];
+	char *cmdBotAdd = new char[11];
+	char *cmdBotKick = new char[12];
 	if (team == COUNTER_TERRORIST)
 	{
 		strcpy(cmdBotAdd, "bot_add ct\n");
 		strcpy(cmdBotKick, "bot_kick ct\n");
-		Msg("come here.\n");
 	}
 	else if (team == TERRORIST)
 	{
@@ -20,6 +19,9 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 	}
 	else
 	{
+		
+		delete[] cmdBotAdd;
+		delete[] cmdBotKick;
 		return;
 	}
 
@@ -51,4 +53,7 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 			vEngineServer->ServerCommand(cmdBotKick);
 		}
 	}
+	
+	delete[] cmdBotAdd;
+	delete[] cmdBotKick;
 }
