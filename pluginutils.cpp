@@ -30,6 +30,7 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 			for (unsigned short i = bots; i < numberBotsAllow; i++)
 			{
 				vEngineServer->ServerCommand(cmdBotAdd);
+				Msg(cmdBotAdd);
 			}
 		}
 		else
@@ -37,6 +38,7 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 			while (bots > numberBotsAllow)
 			{
 				vEngineServer->ServerCommand(cmdBotKick);
+				Msg(cmdBotKick);
 				bots--;
 			}
 		}
