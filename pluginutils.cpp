@@ -5,26 +5,7 @@ extern IVEngineServer *vEngineServer;
 
 void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 {
-	char *cmdBotAdd = new char[11];
-	char *cmdBotKick = new char[12];
-	if (team == COUNTER_TERRORIST)
-	{
-		memcpy(cmdBotAdd, "bot_add ct\n");
-		memcpy(cmdBotKick, "bot_kick ct\n");
-	}
-	else if (team == TERRORIST)
-	{
-		memcpy(cmdBotAdd, "bot_add t\n");
-		memcpy(cmdBotKick, "bot_kick t\n");
-	}
-	else
-	{
-		
-		delete[] cmdBotAdd;
-		delete[] cmdBotKick;
-		return;
-	}
-
+	Msg("Number of bots team %d is %d.\n", team, bots);
 	if (humans <= 5)
 	{
 		unsigned short numberBotsAllow = 5 - humans;
@@ -32,16 +13,36 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 		{
 			for (unsigned short i = bots; i < numberBotsAllow; i++)
 			{
-				vEngineServer->ServerCommand(cmdBotAdd);
-				Msg(cmdBotAdd);
+				if (team == COUNTER_TERRORIST)
+				{
+					vEngineServer->ServerCommand("bot_add ct\n");
+				}
+				else if (team == TERRORIST)
+				{
+					vEngineServer->ServerCommand("bot_add t\n");
+				}
+				else
+				{
+					return;
+				}
 			}
 		}
 		else
 		{
 			while (bots > numberBotsAllow)
 			{
-				vEngineServer->ServerCommand(cmdBotKick);
-				Msg(cmdBotKick);
+				if (team == COUNTER_TERRORIST)
+				{
+					vEngineServer->ServerCommand("bot_kick ct\n");
+				}
+				else if (team == TERRORIST)
+				{
+					vEngineServer->ServerCommand("bot_kick t\n");
+				}
+				else
+				{
+					return;
+				}
 				bots--;
 			}
 		}
@@ -50,10 +51,18 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 	{
 		for (unsigned short i = 0; i < bots; i++)
 		{
-			vEngineServer->ServerCommand(cmdBotKick);
+			if (team == COUNTER_TERRORIST)
+			{
+				vEngineServer->ServerCommand("bot_kick ct\n");
+			}
+			else if (team == TERRORIST)
+			{
+				vEngineServer->ServerCommand("bot_kick t\n");
+			}
+			else
+			{
+				return;
+			}
 		}
 	}
-	
-	delete[] cmdBotAdd;
-	delete[] cmdBotKick;
 }
