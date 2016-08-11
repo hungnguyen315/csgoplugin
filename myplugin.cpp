@@ -123,6 +123,15 @@ void MyPlugin::ServerActivate(edict_t *pEdictList, int edictCount, int clientMax
 	while (serverClass)
 	{
 		const char *className = serverClass->GetName();
+		if (strcmp(className, "CBasePlayer") == 0)
+		{
+			if (!init_CBasePlayer_Props(serverClass->m_pTable))
+			{
+				Warning("Can't init all props CBasePlayer.\n");
+				vEngineServer->ServerCommand("quit\n");
+			}
+		}
+		
 		if (strcmp(className, "CBaseEntity") == 0)
 		{
 			if (!init_CBaseEntity_Props(serverClass->m_pTable))
@@ -131,6 +140,7 @@ void MyPlugin::ServerActivate(edict_t *pEdictList, int edictCount, int clientMax
 				vEngineServer->ServerCommand("quit\n");
 			}
 		}
+		
 		serverClass = serverClass->m_pNext;
 	}
 }

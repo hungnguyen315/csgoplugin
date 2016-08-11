@@ -15,6 +15,7 @@ static int m_iPendingTeamNum_off = 0;
 static int m_fFlags_off = 0;
 
 bool init_CBaseEntity_Props(SendTable* st);
+bool init_CBasePlayer_Props(SendTable* st);
 void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team);
 
 

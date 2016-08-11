@@ -5,6 +5,7 @@ extern IVEngineServer *vEngineServer;
 
 bool init_CBaseEntity_Props(SendTable *st)
 {
+	Msg("Class CBaseEntity.\n");
 	int num = 0;
 	for (int i = 0; i < st->m_nProps; i++)
 	{
@@ -33,6 +34,33 @@ bool init_CBaseEntity_Props(SendTable *st)
 		}
 	}
 	if (num == 3)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool init_CBasePlayer_Props(SendTable *st)
+{
+	Msg("Class CBasePlayer.\n");
+	int num = 0;
+	for (int i = 0; i < st->m_nProps; i++)
+	{
+		SendProp *sp = st->GetProp(i);
+		const char *propName = sp->GetName();
+		Msg("Prop name: %s. Prop Offset: %d.\n. Type: ", propName, sp->GetOffset());
+		
+		if (strcmp(propName, "m_fFlags") == 0)
+		{
+			m_fFlags_off = sp->GetOffset();
+			num++;
+			continue;
+		}
+	}
+	if (num == 1)
 	{
 		return true;
 	}
