@@ -54,6 +54,6 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 		}
 	}
 	
-	delete[] cmdBotAdd;
-	delete[] cmdBotKick;
+	delete [] cmdBotAdd;
+	delete [] cmdBotKick;
 }
