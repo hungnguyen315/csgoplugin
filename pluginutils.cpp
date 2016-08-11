@@ -10,6 +10,7 @@ bool init_CBaseEntity_Props(SendTable* st)
 	{
 		SendProp *sp = st->GetProp(i);
 		const char *propName = sp->GetName();
+		Msg("Prop name: %s. Prop Offset: %d.\n. Type: %s", sp->GetName(), sp->GetOffset(), sp->GetType());
 		if (strcmp(propName, "m_iTeamNum") == 0)
 		{
 			m_iTeamNum_off = sp->GetOffset();
@@ -31,7 +32,7 @@ bool init_CBaseEntity_Props(SendTable* st)
 			continue;
 		}
 	}
-	if (num == 2)
+	if (num == 3)
 	{
 		return true;
 	}
