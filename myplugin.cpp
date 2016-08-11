@@ -97,7 +97,7 @@ void MyPlugin::UnPause()
 
 const char *MyPlugin::GetPluginDescription()
 {
-	return "MyPlugin version 1.0 by Hung Nguyen";
+	return "MyPlugin version 1.0 by hungnmcoder";
 }
 
 void MyPlugin::LevelInit(char const *pMapName)
