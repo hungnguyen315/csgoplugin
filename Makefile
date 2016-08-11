@@ -8,7 +8,7 @@ PLUGIN_NAME = myplugin
 # Plugin files and directories
 ####################################################
 
-CC = gcc
+CC = g++
 CLINK = gcc
 HL2SDK_DIR = /root/hl2sdk-csgo
 SRCDS_DIR = /home/steam/steamcmd/csgods
@@ -71,8 +71,6 @@ all: $(OBJS)
 	ln -sf $(HL2SDK_DIR)/lib/linux/interfaces_i486.a interfaces_i486.a
 	ln -sf $(HL2SDK_DIR)/lib/linux/mathlib_i486.a mathlib_i486.a
 	ln -sf $(HL2SDK_DIR)/lib/linux32/release/libprotobuf.a libprotobuf.a
-#	$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) myplugin.cpp -o myplugin.o
-#	$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) playerdeathevent.cpp -o playerdeathevent.o
 	$(CC) $(INCLUDES) $(OBJS) $(LINK) -o myplugin.so
 	cp myplugin.so /home/steam/steamcmd/csgods/csgo/addons
 
