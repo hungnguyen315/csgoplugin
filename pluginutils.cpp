@@ -3,21 +3,49 @@
 extern CGlobalVars *globalVars;
 extern IVEngineServer *vEngineServer;
 
-edict_t *GetEdictByUserId(int userid)
+void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 {
-	for (int i = 1; i <= globalVars->maxClients; i++)
+	char cmdBotAdd[11];
+	char cmdBotKick[12];
+	if (team == COUNTER_TERRORIST)
 	{
-		edict_t *edict = globalVars->pEdicts + i;
-		if (vEngineServer->GetPlayerUserId(edict) == userid)
+		strcpy(cmdBotAdd, "bot_add ct\n");
+		strcpy(cmdBotKick, "bot_kick ct\n");
+	}
+	else if (team == TERRORIST)
+	{
+		strcpy(cmdBotAdd, "bot_add t\n");
+		strcpy(cmdBotKick, "bot_kick t\n");
+	}
+	else
+	{
+		return;
+	}
+
+	if (humans <= 5)
+	{
+		unsigned short numberBotsAllow = 5 - humans;
+		if (bots <= numberBotsAllow)
 		{
-			return edict;
-		}
-		/*if (edict && !edict->IsFree() && strcmp(edict->GetClassName(), "player") == 0)
-		{
-			if (vEngineServer->GetPlayerUserId(edict) == userid)
+			for (unsigned short i = bots; i < numberBotsAllow; i++)
 			{
-				return edict;
+				vEngineServer->ServerCommand(cmdBotAdd);
 			}
-		}*/
+		}
+		else
+		{
+			while (bots > numberBotsAllow)
+			{
+				vEngineServer->ServerCommand(cmdBotKick);
+				bots--;
+			}
+		}
+	}
+	else
+	{
+		for (unsigned short i = 0; i < bots; i++)
+		{
+			vEngineServer->ServerCommand(cmdBotKick);
+		}
 	}
 }

@@ -13,6 +13,6 @@ static const unsigned int m_iTeamNum_addr = 0x310;
 static const unsigned int m_iPendingTeamNum_addr = 0x314;
 static const unsigned int m_fFlags_addr = 0x0D8;
 
-//edict_t *GetEdictByUserId(int userid);
+void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team);
 
 #endif
