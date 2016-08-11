@@ -19,22 +19,22 @@ void RoundStartEvent::FireGameEvent(IGameEvent *event)
 				int flags = *(int *)((char *)playerEntity + m_fFlags_addr);
 				if (flags & FL_FAKECLIENT)
 				{
-					if (team == COUNTER_TERRORIST)
+					if (team == 3)
 					{
 						botsTeamCT++;
 					}
-					else if (team == TERRORIST)
+					else if (team == 2)
 					{
 						botsTeamT++;
 					}
 				}
 				else if (flags & FL_CLIENT)
 				{
-					if (team == COUNTER_TERRORIST)
+					if (team == 3)
 					{
 						humansTeamCT++;
 					}
-					else if (team == TERRORIST)
+					else if (team == 2)
 					{
 						humansTeamT++;
 					}
@@ -43,8 +43,8 @@ void RoundStartEvent::FireGameEvent(IGameEvent *event)
 		}
 	}
 
-	BalanceNumberOfBots(humansTeamCT, botsTeamCT, COUNTER_TERRORIST);
-	BalanceNumberOfBots(humansTeamT, botsTeamT, TERRORIST);
+	BalanceNumberOfBots(humansTeamCT, botsTeamCT, 3);
+	BalanceNumberOfBots(humansTeamT, botsTeamT, 2);
 }
 
 int RoundStartEvent::GetEventDebugID()
