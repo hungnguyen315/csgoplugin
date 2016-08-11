@@ -25,15 +25,9 @@ bool init_CBaseEntity_Props(SendTable *st)
 			num++;
 			continue;
 		}
-		
-		if (strcmp(propName, "m_fFlags") == 0)
-		{
-			m_fFlags_off = sp->GetOffset();
-			num++;
-			continue;
-		}
 	}
-	if (num == 3)
+
+	if (num == 2)
 	{
 		return true;
 	}
