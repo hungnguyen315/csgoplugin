@@ -3,11 +3,48 @@
 extern CGlobalVars *globalVars;
 extern IVEngineServer *vEngineServer;
 
+// CBaseEntity
 int m_iTeamNum_off;
 int m_iPendingTeamNum_off;
 int m_fFlags_off;
+
+// CBasePlayer
 int m_iHealth_off;
 int m_fEffects_off;
+
+// CCSPlayerResource
+int m_iCompetitiveRanking_off;
+
+bool init_CCSPlayerResource_Props(SendTable *st)
+{
+	Msg("\n");
+	Msg("###################################################\n");
+	Msg("# CCSPlayerResource\n");
+	Msg("###################################################\n");
+	int num = 0;
+	for (int i = 0; i < st->m_nProps; i++)
+	{
+		SendProp *sp = st->GetProp(i);
+		const char *propName = sp->GetName();
+		int propOffset = sp->GetOffset();
+		Msg("Prop name: %s. Prop Offset: %d. IsSigned: %d.\n", propName, propOffset, sp->IsSigned());
+		if (strcmp(propName, "m_iCompetitiveRanking_off") == 0)
+		{
+			m_iCompetitiveRanking_off = propOffset;
+			num++;
+			continue;
+		}
+	}
+
+	if (num == 1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 bool init_CBaseEntity_Props(SendTable *st)
 {

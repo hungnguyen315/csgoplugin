@@ -12,6 +12,7 @@ class CBaseEntity;
 
 bool init_CBaseEntity_Props(SendTable* st);
 bool init_CBasePlayer_Props(SendTable* st);
+bool init_CCSPlayerResource_Props(SendTable *st);
 void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team);
 
 
