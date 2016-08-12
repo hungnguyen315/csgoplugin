@@ -7,32 +7,44 @@ int m_iTeamNum_off;
 int m_iPendingTeamNum_off;
 int m_fFlags_off;
 int m_iHealth_off;
+int m_fEffects_off;
 
 bool init_CBaseEntity_Props(SendTable *st)
 {
-	Msg("Class CBaseEntity.\n");
+	Msg("\n");
+	Msg("###################################################\n");
+	Msg("# CBaseEntity\n");
+	Msg("###################################################\n");
 	int num = 0;
 	for (int i = 0; i < st->m_nProps; i++)
 	{
 		SendProp *sp = st->GetProp(i);
 		const char *propName = sp->GetName();
-		Msg("Prop name: %s. Prop Offset: %d.\n. Type: ", propName, sp->GetOffset());
+		int propOffset = sp->GetOffset();
+		Msg("Prop name: %s. Prop Offset: %d. IsSigned: %d.\n", propName, propOffset, sp->IsSigned());
 		if (strcmp(propName, "m_iTeamNum") == 0)
 		{
-			m_iTeamNum_off = sp->GetOffset();
+			m_iTeamNum_off = propOffset;
 			num++;
 			continue;
 		}
 		
 		if (strcmp(propName, "m_iPendingTeamNum") == 0)
 		{
-			m_iPendingTeamNum_off = sp->GetOffset();
+			m_iPendingTeamNum_off = propOffset;
+			num++;
+			continue;
+		}
+		
+		if (strcmp(propName, "m_fEffects") == 0)
+		{
+			m_fEffects_off = propOffset;
 			num++;
 			continue;
 		}
 	}
 
-	if (num == 2)
+	if (num == 3)
 	{
 		return true;
 	}
@@ -44,24 +56,27 @@ bool init_CBaseEntity_Props(SendTable *st)
 
 bool init_CBasePlayer_Props(SendTable *st)
 {
-	Msg("Class CBasePlayer.\n");
+	Msg("\n");
+	Msg("###################################################\n");
+	Msg("# CBasePlayer\n");
+	Msg("###################################################\n");
 	int num = 0;
 	for (int i = 0; i < st->m_nProps; i++)
 	{
 		SendProp *sp = st->GetProp(i);
 		const char *propName = sp->GetName();
-		Msg("Prop name: %s. Prop Offset: %d.\n. Type: ", propName, sp->GetOffset());
-		
+		int propOffset = sp->GetOffset();
+		Msg("Prop name: %s. Prop Offset: %d. IsSigned: %d.\n", propName, propOffset, sp->IsSigned());
 		if (strcmp(propName, "m_fFlags") == 0)
 		{
-			m_fFlags_off = sp->GetOffset();
+			m_fFlags_off = propOffset;
 			num++;
 			continue;
 		}
 		
 		if (strcmp(propName, "m_iHealth") == 0)
 		{
-			m_iHealth_off = sp->GetOffset();
+			m_iHealth_off = propOffset;
 			num++;
 			continue;
 		}

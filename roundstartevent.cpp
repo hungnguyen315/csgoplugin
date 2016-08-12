@@ -19,26 +19,27 @@ void RoundStartEvent::FireGameEvent(IGameEvent *event)
 			CBaseEntity *playerEntity = serverGameEnts->EdictToBaseEntity(playerEdict);
 			if (playerEntity)
 			{
-				int team = *(int *)((char *)playerEntity + m_iTeamNum_off);
-				int flags = *(int *)((char *)playerEntity + m_fFlags_off);
-				if (flags & FL_FAKECLIENT)
+				int *team = (int *)((char *)playerEntity + m_iTeamNum_off);
+				int *pendingTeam = (int *)((char *)playerEntity + m_iPendingTeamNum_off);
+				unsigned int *flags = (unsigned int *)((char *)playerEntity + m_fFlags_off);
+				if (*flags & FL_FAKECLIENT)
 				{
-					if (team == COUNTER_TERRORIST)
+					if (*pendingTeam == COUNTER_TERRORIST)
 					{
 						botsTeamCT++;
 					}
-					else if (team == TERRORIST)
+					else if (*pendingTeam == TERRORIST)
 					{
 						botsTeamT++;
 					}
 				}
-				else if (flags & FL_CLIENT)
+				else if (*flags & FL_CLIENT)
 				{
-					if (team == COUNTER_TERRORIST)
+					if (*pendingTeam == COUNTER_TERRORIST)
 					{
 						humansTeamCT++;
 					}
-					else if (team == TERRORIST)
+					else if (*pendingTeam == TERRORIST)
 					{
 						humansTeamT++;
 					}
