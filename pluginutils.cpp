@@ -27,8 +27,8 @@ bool init_CCSPlayerResource_Props(SendTable *st)
 		SendProp *sp = st->GetProp(i);
 		const char *propName = sp->GetName();
 		int propOffset = sp->GetOffset();
-		Msg("Prop name: %s. Prop Offset: %d. IsSigned: %d.\n", propName, propOffset, sp->IsSigned());
-		if (strcmp(propName, "m_iCompetitiveRanking_off") == 0)
+		Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propName, propOffset, sp->GetType(), sp->IsSigned());
+		if (strcmp(propName, "m_iCompetitiveRanking") == 0)
 		{
 			m_iCompetitiveRanking_off = propOffset;
 			num++;
@@ -58,7 +58,7 @@ bool init_CBaseEntity_Props(SendTable *st)
 		SendProp *sp = st->GetProp(i);
 		const char *propName = sp->GetName();
 		int propOffset = sp->GetOffset();
-		Msg("Prop name: %s. Prop Offset: %d. IsSigned: %d.\n", propName, propOffset, sp->IsSigned());
+		Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propName, propOffset, sp->GetType(), sp->IsSigned());
 		if (strcmp(propName, "m_iTeamNum") == 0)
 		{
 			m_iTeamNum_off = propOffset;
@@ -103,7 +103,7 @@ bool init_CBasePlayer_Props(SendTable *st)
 		SendProp *sp = st->GetProp(i);
 		const char *propName = sp->GetName();
 		int propOffset = sp->GetOffset();
-		Msg("Prop name: %s. Prop Offset: %d. IsSigned: %d.\n", propName, propOffset, sp->IsSigned());
+		Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propName, propOffset, sp->GetType(), sp->IsSigned());
 		if (strcmp(propName, "m_fFlags") == 0)
 		{
 			m_fFlags_off = propOffset;
@@ -189,4 +189,19 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 			}
 		}
 	}
+}
+
+void CreateMenu(bf_write* pBuffer, const char* szMessage, int nOptions, int iSecondsToStayOpen)
+{
+	//Assert(pBuffer);
+ 
+	// Add option to bits
+	int optionBits = 0;
+	for(int i = 0; i < nOptions; i++)
+		optionBits |= (1<<i);
+ 
+	pBuffer->WriteShort(optionBits); // Write options
+	pBuffer->WriteChar(iSecondsToStayOpen); // Seconds to stay open
+	pBuffer->WriteByte(false); // We don't need to receive any more of this menu
+	pBuffer->WriteString(szMessage); // Write the menu message
 }

@@ -21,8 +21,10 @@ ARCH_CFLAGS = -mtune=i486 -march=pentium3 -mmmx -msse
 BASE_CFLAGS = -D_LINUX -DPOSIX -DCOMPILER_GCC \
 -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
 -D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -Wall -Werror \
--Wno-overloaded-virtual -Wno-switch -Wno-unused -Wno-non-virtual-dtor -fno-exceptions -fno-rtti \
+-Wno-overlioaded-virtual -Wno-switch -Wno-unused -Wno-non-virtual-dtor -fno-exceptions \
 -mfpmath=sse -Wno-delete-non-virtual-dtor
+
+#-fno-rtti
 
 OPT_FLAGS = -O3 -funroll-loops -pipe -fno-strict-aliasing
 DEBUG_FLAGS = -g -ggdb3 -D_DEBUG
@@ -32,8 +34,8 @@ GCC4_FLAGS = -fvisibility=hidden -fvisibility-inlines-hidden
 # Plugin lib includes
 ####################################################
 
-LINK = tier1_i486.a interfaces_i486.a libvstdlib.so libtier0.so \
-mathlib_i486.a libprotobuf.a -m32 -lm -ldl -shared -static-libgcc \
+LINK = libprotobuf.a tier1_i486.a interfaces_i486.a libvstdlib.so libtier0.so \
+mathlib_i486.a -m32 -lm -ldl -shared -static-libgcc \
 -lstdc++
 
 ####################################################
@@ -42,7 +44,8 @@ mathlib_i486.a libprotobuf.a -m32 -lm -ldl -shared -static-libgcc \
 
 INCLUDES = -I$(HL2SDK_DIR)/public -I$(HL2SDK_DIR)/public/engine -I$(HL2SDK_DIR)/public/tier0 \
 -I$(HL2SDK_DIR)/public/tier1 -I$(HL2SDK_DIR)/public/vstdlib -I$(HL2SDK_DIR)/public/game/server \
--I$(HL2SDK_DIR)/public/game/client
+-I$(HL2SDK_DIR)/public/game/shared -I$(HL2SDK_DIR)/public/game/shared -I$(HL2SDK_DIR)/public/game/shared/csgo/protobuf \
+-I$(HL2SDK_DIR)/public/engine/protobuf -I$(HL2SDK_DIR)/common/protobuf-2.5.0/src
 
 ####################################################
 # Compile section
@@ -62,7 +65,11 @@ all: $(OBJS)
 	ln -sf $(HL2SDK_DIR)/lib/linux/interfaces_i486.a interfaces_i486.a
 	ln -sf $(HL2SDK_DIR)/lib/linux/mathlib_i486.a mathlib_i486.a
 	ln -sf $(HL2SDK_DIR)/lib/linux32/release/libprotobuf.a libprotobuf.a
-	$(CC) $(INCLUDES) $(OBJS) $(LINK) -o myplugin.so
+	$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) $(HL2SDK_DIR)/public/game/shared/csgo/protobuf/cstrike15_usermessage_helpers.cpp -o cstrike15_usermessage_helpers.o
+	$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) $(HL2SDK_DIR)/public/engine/protobuf/netmessages.pb.cc -o netmessages.o
+	$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) $(HL2SDK_DIR)/public/game/shared/csgo/protobuf/cstrike15_usermessages.pb.cc -o cstrike15_usermessages.o
+	#$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) $(HL2SDK_DIR)/public/game/shared/csgo/protobuf/cstrike15_usermessages.proto -o cstrike15_usermessages2.o
+	$(CC) $(INCLUDES) $(OBJS) cstrike15_usermessage_helpers.o netmessages.o cstrike15_usermessages.o $(LINK) -o myplugin.so
 	cp myplugin.so /home/steam/steamcmd/csgods/csgo/addons
 
 clean:

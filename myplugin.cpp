@@ -143,7 +143,7 @@ void MyPlugin::ServerActivate(edict_t *pEdictList, int edictCount, int clientMax
 		
 		if (strcmp(className, "CCSPlayerResource") == 0)
 		{
-			if (!bool init_CCSPlayerResource_Props(SendTable *st))
+			if (!init_CCSPlayerResource_Props(serverClass->m_pTable))
 			{
 				Warning("Can't init all props CCSPlayerResource.\n");
 				vEngineServer->ServerCommand("quit\n");
