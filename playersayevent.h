@@ -7,6 +7,7 @@
 #include "cstrike15_usermessage_helpers.h"
 #include "pluginutils.h"
 #include "mrecipientfilter.h"
+#include "string.h"
 
 class PlayerSayEvent : public IGameEventListener2
 {

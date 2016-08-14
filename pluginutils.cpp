@@ -7,6 +7,7 @@ extern IVEngineServer *vEngineServer;
 int m_iTeamNum_off;
 int m_iPendingTeamNum_off;
 int m_fFlags_off;
+int m_nRenderMode_off;
 
 // CBasePlayer
 int m_iHealth_off;
@@ -79,9 +80,16 @@ bool init_CBaseEntity_Props(SendTable *st)
 			num++;
 			continue;
 		}
+		
+		if (strcmp(propName, "m_nRenderMode") == 0)
+		{
+			m_nRenderMode_off = propOffset;
+			num++;
+			continue;
+		}
 	}
 
-	if (num == 3)
+	if (num == 4)
 	{
 		return true;
 	}
@@ -117,6 +125,7 @@ bool init_CBasePlayer_Props(SendTable *st)
 			num++;
 			continue;
 		}
+		
 	}
 	if (num == 2)
 	{
@@ -130,43 +139,43 @@ bool init_CBasePlayer_Props(SendTable *st)
 
 void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 {
+	char botkickct[] = "bot_kick ct\n";
+	char botkickt[] = "bot_kick t\n";
+	char botaddct[] = "bot_add ct\n";
+	char botaddt[] = "bot_add t\n";
+
+	char *botkick, *botadd;
+
+	if (team == COUNTER_TERRORIST)
+	{
+		botkick = botkickct;
+		botadd = botaddct;
+	}
+	else if (team == TERRORIST)
+	{
+		botkick = botkickt;
+		botadd = botaddt;
+	}
+	else
+	{
+		return;
+	}
+
 	if (humans <= 5)
 	{
-		unsigned short numberBotsAllow = 5 - humans;
-		if (bots <= numberBotsAllow)
+		unsigned short numberbotsallow = 5 - humans;
+		if (bots < numberbotsallow)
 		{
-			for (unsigned short i = bots; i < numberBotsAllow; i++)
+			for (unsigned short i = 0; i < numberbotsallow; i++)
 			{
-				if (team == COUNTER_TERRORIST)
-				{
-					vEngineServer->ServerCommand("bot_add ct\n");
-				}
-				else if (team == TERRORIST)
-				{
-					vEngineServer->ServerCommand("bot_add t\n");
-				}
-				else
-				{
-					return;
-				}
+				vEngineServer->ServerCommand(botadd);
 			}
 		}
 		else
 		{
-			while (bots > numberBotsAllow)
+			while (bots > numberbotsallow)
 			{
-				if (team == COUNTER_TERRORIST)
-				{
-					vEngineServer->ServerCommand("bot_kick ct\n");
-				}
-				else if (team == TERRORIST)
-				{
-					vEngineServer->ServerCommand("bot_kick t\n");
-				}
-				else
-				{
-					return;
-				}
+				vEngineServer->ServerCommand(botkick);
 				bots--;
 			}
 		}
@@ -175,33 +184,7 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 	{
 		for (unsigned short i = 0; i < bots; i++)
 		{
-			if (team == COUNTER_TERRORIST)
-			{
-				vEngineServer->ServerCommand("bot_kick ct\n");
-			}
-			else if (team == TERRORIST)
-			{
-				vEngineServer->ServerCommand("bot_kick t\n");
-			}
-			else
-			{
-				return;
-			}
+			vEngineServer->ServerCommand(botkick);
 		}
 	}
-}
-
-void CreateMenu(bf_write* pBuffer, const char* szMessage, int nOptions, int iSecondsToStayOpen)
-{
-	//Assert(pBuffer);
- 
-	// Add option to bits
-	int optionBits = 0;
-	for(int i = 0; i < nOptions; i++)
-		optionBits |= (1<<i);
- 
-	pBuffer->WriteShort(optionBits); // Write options
-	pBuffer->WriteChar(iSecondsToStayOpen); // Seconds to stay open
-	pBuffer->WriteByte(false); // We don't need to receive any more of this menu
-	pBuffer->WriteString(szMessage); // Write the menu message
 }

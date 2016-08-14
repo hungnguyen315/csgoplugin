@@ -14,6 +14,8 @@
 #include "playerconnectevent.h"
 #include "playerdisconnectevent.h"
 #include "roundstartevent.h"
+#include "itempickupevent.h"
+#include "playerspawnevent.h"
 
 class MyPlugin : public IServerPluginCallbacks
 {

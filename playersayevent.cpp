@@ -1,10 +1,21 @@
 #include "playersayevent.h"
+#include "sys/mman.h"
 
 extern CGlobalVars *globalVars;
 extern IVEngineServer *vEngineServer;
 extern IServerGameEnts *serverGameEnts;
 //extern CCstrike15UsermessageHelpers *g_Cstrike15UsermessageHelpers;
 extern int m_fEffects_off;
+
+class CBaseCombatWeapon;
+
+typedef bool (*fn_IsMoving)();
+fn_IsMoving org_IsMoving;
+bool Hook_IsMoving()
+{
+	Msg("Custom IsMoving fire.\n");
+	return org_IsMoving();
+}
 
 void PlayerSayEvent::FireGameEvent(IGameEvent *event)
 {
@@ -22,6 +33,14 @@ void PlayerSayEvent::FireGameEvent(IGameEvent *event)
 					CBaseEntity *entity = serverGameEnts->EdictToBaseEntity(edict);
 					if (entity)
 					{
+						void **base = *(void ***)entity;
+						//mprotect(&base[285], 4, PAGE_EXECUTE_READWRITE, &oldProtection);
+						org_IsMoving = (fn_IsMoving)&base[80];
+						
+						mprotect(&entity, 640, PROT_READ | PROT_WRITE | PROT_EXEC);
+						base[80] = (void *)&Hook_IsMoving;
+
+
 						int optionBits = 0;
 						for(int i = 0; i < 3; i++)
 						{

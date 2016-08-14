@@ -1,4 +1,6 @@
 #include "myplugin.h"
+#include "cstrike15_usermessage_helpers.h"
+#include "mrecipientfilter.h"
 
 IVEngineServer *vEngineServer = NULL;
 IPlayerInfoManager *playerInfoManager = NULL;
@@ -14,6 +16,8 @@ PlayerSayEvent *playerSayEvent = NULL;
 PlayerConnectEvent *playerConnectEvent = NULL;
 PlayerDisconnectEvent *playerDisconnectEvent = NULL;
 RoundStartEvent *roundStartEvent = NULL;
+ItemPickupEvent *itemPickupEvent = NULL;
+PlayerSpawnEvent *playerSpawnEvent = NULL;
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
 {
@@ -75,6 +79,8 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 	playerConnectEvent = new PlayerConnectEvent();
 	playerDisconnectEvent = new PlayerDisconnectEvent();
 	roundStartEvent = new RoundStartEvent();
+	itemPickupEvent = new ItemPickupEvent();
+	playerSpawnEvent = new PlayerSpawnEvent();
 
 	return true;
 }
@@ -91,6 +97,10 @@ void MyPlugin::Unload()
         delete playerDisconnectEvent;
 	gameEventManager2->RemoveListener(roundStartEvent);
         delete roundStartEvent;
+	gameEventManager2->RemoveListener(itemPickupEvent);
+	delete itemPickupEvent;
+	gameEventManager2->RemoveListener(playerSpawnEvent);
+	delete playerSpawnEvent;
 }
 
 void MyPlugin::Pause()
@@ -115,6 +125,8 @@ void MyPlugin::LevelInit(char const *pMapName)
 	gameEventManager2->AddListener(playerConnectEvent, "player_connect", true);
 	gameEventManager2->AddListener(playerDisconnectEvent, "player_disconnect", true);
 	gameEventManager2->AddListener(roundStartEvent, "round_start", true);
+	gameEventManager2->AddListener(itemPickupEvent, "item_pickup", true);
+	gameEventManager2->AddListener(playerSpawnEvent, "player_spawn", true);
 }
 
 void MyPlugin::ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
@@ -166,6 +178,8 @@ void MyPlugin::LevelShutdown()
 	gameEventManager2->RemoveListener(playerConnectEvent);
 	gameEventManager2->RemoveListener(playerDisconnectEvent);
 	gameEventManager2->RemoveListener(roundStartEvent);
+	gameEventManager2->RemoveListener(itemPickupEvent);
+	gameEventManager2->RemoveListener(playerSpawnEvent);
 }
 
 void MyPlugin::OnQueryCvarValueFinished(QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue)
@@ -221,6 +235,35 @@ void MyPlugin::ClientSettingsChanged(edict_t *pEdict)
 
 PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 {
+	if (!pEntity || pEntity->IsFree())
+	{
+		return PLUGIN_CONTINUE;
+	}
+	Msg("Arg is %s.\n", args[0]);
+	if (strcmp(args[0], "+lookatweapon") == 0)
+	{
+		int entindex = 0;
+		for (int i = 1; i < globalVars->maxClients; i++)
+		{
+			if ((globalVars->pEdicts + i) == pEntity)
+			{
+				Msg("EntIndex: %d. Userid %d.\n", i,vEngineServer->GetPlayerUserId(globalVars->pEdicts + i));
+				entindex = i;
+				break;
+			}
+		}
+		
+		if (entindex == 0)
+		{
+			return PLUGIN_CONTINUE;
+		}
+		
+		MRecipientFilter filter;
+		filter.AddRecipient(entindex);
+		CCSUsrMsg_ServerRankRevealAll *msg = (CCSUsrMsg_ServerRankRevealAll *)g_Cstrike15UsermessageHelpers.GetPrototype(CS_UM_ServerRankRevealAll)->New();
+		vEngineServer->SendUserMessage(static_cast<IRecipientFilter &>(filter), CS_UM_ServerRankRevealAll, *msg);
+		delete msg;
+	}
 	return PLUGIN_CONTINUE;
 }
 
