@@ -1,5 +1,5 @@
 #include "playersayevent.h"
-#include "sys/mman.h"
+/*#include "sys/mman.h"
 
 extern CGlobalVars *globalVars;
 extern IVEngineServer *vEngineServer;
@@ -15,11 +15,11 @@ bool Hook_IsMoving()
 {
 	Msg("Custom IsMoving fire.\n");
 	return org_IsMoving();
-}
+}*/
 
 void PlayerSayEvent::FireGameEvent(IGameEvent *event)
 {
-	const char *text = event->GetString("text");
+	/*const char *text = event->GetString("text");
 	if (strcmp(text, "!bc") == 0)
 	{
 		for (unsigned short i = 1; i <= globalVars->maxClients; i++)
@@ -62,7 +62,7 @@ void PlayerSayEvent::FireGameEvent(IGameEvent *event)
 				}
 			}
 		}
-	}
+	}*/
 }
 
 int PlayerSayEvent::GetEventDebugID()

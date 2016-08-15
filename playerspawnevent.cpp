@@ -1,5 +1,5 @@
 #include "playerspawnevent.h"
-#include "eiface.h"
+/*#include "eiface.h"
 #include "edict.h"
 
 class CBaseEntity;
@@ -9,11 +9,11 @@ extern IVEngineServer *vEngineServer;
 extern IServerGameEnts *serverGameEnts;
 
 extern int m_nRenderMode_off;
-extern int m_fEffects_off;
+extern int m_fEffects_off;*/
 
 void PlayerSpawnEvent::FireGameEvent(IGameEvent *event)
 {
-	int userid = event->GetInt("userid");
+	/*int userid = event->GetInt("userid");
 	for (int i = 1; i < globalVars->maxClients; i++)
 	{
 		edict_t *edict = globalVars->pEdicts + i;
@@ -39,7 +39,7 @@ void PlayerSpawnEvent::FireGameEvent(IGameEvent *event)
 		//*renderMode &= ~kRenderNormal;
 		//*renderMode |= kRenderNone;
 		break;
-	}
+	}*/
 }
 
 int PlayerSpawnEvent::GetEventDebugID()
