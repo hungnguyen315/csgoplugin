@@ -18,6 +18,7 @@ PlayerDisconnectEvent *playerDisconnectEvent = NULL;
 RoundStartEvent *roundStartEvent = NULL;
 ItemPickupEvent *itemPickupEvent = NULL;
 PlayerSpawnEvent *playerSpawnEvent = NULL;
+PlayerSpawnedEvent *playerSpawnedEvent = NULL;
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
 {
@@ -81,6 +82,7 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 	roundStartEvent = new RoundStartEvent();
 	itemPickupEvent = new ItemPickupEvent();
 	playerSpawnEvent = new PlayerSpawnEvent();
+	playerSpawnedEvent = new PlayerSpawnedEvent();
 
 	return true;
 }
@@ -92,15 +94,17 @@ void MyPlugin::Unload()
 	gameEventManager2->RemoveListener(playerSayEvent);
 	delete playerSayEvent;
 	gameEventManager2->RemoveListener(playerConnectEvent);
-        delete playerConnectEvent;
+	delete playerConnectEvent;
 	gameEventManager2->RemoveListener(playerDisconnectEvent);
-        delete playerDisconnectEvent;
+	delete playerDisconnectEvent;
 	gameEventManager2->RemoveListener(roundStartEvent);
-        delete roundStartEvent;
+	delete roundStartEvent;
 	gameEventManager2->RemoveListener(itemPickupEvent);
 	delete itemPickupEvent;
 	gameEventManager2->RemoveListener(playerSpawnEvent);
 	delete playerSpawnEvent;
+	gameEventManager2->RemoveListener(playerSpawnedEvent);
+	delete playerSpawnedEvent;
 }
 
 void MyPlugin::Pause()
@@ -127,6 +131,7 @@ void MyPlugin::LevelInit(char const *pMapName)
 	gameEventManager2->AddListener(roundStartEvent, "round_start", true);
 	gameEventManager2->AddListener(itemPickupEvent, "item_pickup", true);
 	gameEventManager2->AddListener(playerSpawnEvent, "player_spawn", true);
+	gameEventManager2->AddListener(playerSpawnedEvent, "player_spawned", true);
 }
 
 void MyPlugin::ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
@@ -180,6 +185,7 @@ void MyPlugin::LevelShutdown()
 	gameEventManager2->RemoveListener(roundStartEvent);
 	gameEventManager2->RemoveListener(itemPickupEvent);
 	gameEventManager2->RemoveListener(playerSpawnEvent);
+	gameEventManager2->RemoveListener(playerSpawnedEvent);
 }
 
 void MyPlugin::OnQueryCvarValueFinished(QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue)
