@@ -2,6 +2,8 @@
 #include "server_class.h"
 #include "dt_send.h"
 
+#include "sys/mman.h"
+
 #include "playerdeathevent.h"
 #include "playersayevent.h"
 #include "playerconnectevent.h"
@@ -43,6 +45,8 @@ RoundStartEvent *roundStartEvent = NULL;
 ItemPickupEvent *itemPickupEvent = NULL;
 PlayerSpawnEvent *playerSpawnEvent = NULL;
 PlayerSpawnedEvent *playerSpawnedEvent = NULL;
+
+int pagesize = sysconf(_SC_PAGESIZE);
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
 {
@@ -306,6 +310,7 @@ void MyPlugin::ClientSettingsChanged(edict_t *pEdict)
 
 PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 {
+	Msg("Page size is %d.\n", pagesize);
 	return PLUGIN_CONTINUE;
 }
 
