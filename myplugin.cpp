@@ -1,6 +1,8 @@
 #include "myplugin.h"
 #include "cstrike15_usermessage_helpers.h"
 #include "mrecipientfilter.h"
+#include "server_class.h"
+#include "dt_send.h"
 
 #include "playerdeathevent.h"
 #include "playersayevent.h"
@@ -20,6 +22,19 @@ IServerTools *serverTools = NULL;
 IServerPluginHelpers *serverPluginHelpers = NULL;
 IServerGameDLL *serverGameDLL = NULL;
 
+// CBaseEntity
+int m_iTeamNum_off;
+int m_iPendingTeamNum_off;
+int m_fEffects_off;
+int m_nRenderMode_off;
+
+// CBasePlayer
+int m_iHealth_off;
+int m_fFlags_off;
+
+// CCSPlayerResource
+int m_iCompetitiveRanking_off;
+
 PlayerDeathEvent *playerDeathEvent = NULL;
 PlayerSayEvent *playerSayEvent = NULL;
 PlayerConnectEvent *playerConnectEvent = NULL;
@@ -32,7 +47,75 @@ PlayerSpawnedEvent *playerSpawnedEvent = NULL;
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
 {
 	serverGameDLL = (IServerGameDLL *)gameServerFactory(INTERFACEVERSION_SERVERGAMEDLL, NULL);
-	if (!serverGameDLL)
+	if (serverGameDLL)
+	{
+		ServerClass *svrclass = serverGameDLL->GetAllServerClasses();
+		while (svrclass)
+		{
+			const char *classname = svrclass->GetName();
+			Msg("[%s]\n", classname);
+			if (strcmp(classname, "CBasePlayer") == 0)
+			{
+				SendTable *st = svrclass->m_pTable;
+				for (int i = 0; i < st->m_nProps; i++)
+				{
+					SendProp *sp = st->GetProp(i);
+					const char *propname = sp->GetName();
+					Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propName, sp->GetOffset(), sp->GetType(), sp->IsSigned());
+					
+					if (strcmp(propname, "m_fFlags") == 0)
+					{
+						m_fFlags_off = sp->GetOffset();
+						continue;
+					}
+					
+					if (strcmp(propname, "m_iHealth") == 0)
+					{
+						m_iHealth_off = sp->GetOffset();
+						continue;
+					}
+				}
+			}
+			
+			if (strcmp(classname, "CBaseEntity") == 0)
+			{
+				SendTable *st = svrclass->m_pTable;
+				for (int i = 0; i < st->m_nProps; i++)
+				{
+					SendProp *sp = st->GetProp(i);
+					const char *propname = sp->GetName();
+					Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propName, sp->GetOffset(), sp->GetType(), sp->IsSigned());
+					
+					if (strcmp(propname, "m_iTeamNum") == 0)
+					{
+						m_iTeamNum_off = sp->GetOffset();
+						continue;
+					}
+					
+					if (strcmp(propname, "m_iPendingTeamNum") == 0)
+					{
+						m_iPendingTeamNum_off = sp->GetOffset();
+						continue;
+					}
+					
+					if (strcmp(propname, "m_fEffects") == 0)
+					{
+						m_fEffects_off = sp->GetOffset();
+						continue;
+					}
+					
+					if (strcmp(propname, "m_nRenderMode") == 0)
+					{
+						m_nRenderMode_off = sp->GetOffset();
+						continue;
+					}
+				}
+			}
+			
+			svrclass = svrclass->m_pNext;
+		}
+	}
+	else
 	{
 		Warning("Unable to load IServerGameDLL.\n");
 		return false;
@@ -145,39 +228,7 @@ void MyPlugin::LevelInit(char const *pMapName)
 
 void MyPlugin::ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 {
-	ServerClass *serverClass = serverGameDLL->GetAllServerClasses();
-	while (serverClass)
-	{
-		const char *className = serverClass->GetName();
-		if (strcmp(className, "CBasePlayer") == 0)
-		{
-			if (!init_CBasePlayer_Props(serverClass->m_pTable))
-			{
-				Warning("Can't init all props CBasePlayer.\n");
-				vEngineServer->ServerCommand("quit\n");
-			}
-		}
-		
-		if (strcmp(className, "CBaseEntity") == 0)
-		{
-			if (!init_CBaseEntity_Props(serverClass->m_pTable))
-			{
-				Warning("Can't init all props CBaseEntity.\n");
-				vEngineServer->ServerCommand("quit\n");
-			}
-		}
-		
-		if (strcmp(className, "CCSPlayerResource") == 0)
-		{
-			if (!init_CCSPlayerResource_Props(serverClass->m_pTable))
-			{
-				Warning("Can't init all props CCSPlayerResource.\n");
-				vEngineServer->ServerCommand("quit\n");
-			}
-		}
-		
-		serverClass = serverClass->m_pNext;
-	}
+	
 }
 
 void MyPlugin::GameFrame(bool simulating)
@@ -250,35 +301,6 @@ void MyPlugin::ClientSettingsChanged(edict_t *pEdict)
 
 PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 {
-	if (!pEntity || pEntity->IsFree())
-	{
-		return PLUGIN_CONTINUE;
-	}
-	Msg("Arg is %s.\n", args[0]);
-	if (strcmp(args[0], "+lookatweapon") == 0)
-	{
-		int entindex = 0;
-		for (int i = 1; i < globalVars->maxClients; i++)
-		{
-			if ((globalVars->pEdicts + i) == pEntity)
-			{
-				Msg("EntIndex: %d. Userid %d.\n", i,vEngineServer->GetPlayerUserId(globalVars->pEdicts + i));
-				entindex = i;
-				break;
-			}
-		}
-		
-		if (entindex == 0)
-		{
-			return PLUGIN_CONTINUE;
-		}
-		
-		MRecipientFilter filter;
-		filter.AddRecipient(entindex);
-		CCSUsrMsg_ServerRankRevealAll *msg = (CCSUsrMsg_ServerRankRevealAll *)g_Cstrike15UsermessageHelpers.GetPrototype(CS_UM_ServerRankRevealAll)->New();
-		vEngineServer->SendUserMessage(static_cast<IRecipientFilter &>(filter), CS_UM_ServerRankRevealAll, *msg);
-		delete msg;
-	}
 	return PLUGIN_CONTINUE;
 }
 

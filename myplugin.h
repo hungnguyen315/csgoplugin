@@ -6,8 +6,6 @@
 #include "eiface.h"
 #include "iplayerinfo.h"
 #include "toolframework/itoolentity.h"
-#include "server_class.h"
-#include "dt_send.h"
 
 class MyPlugin : public IServerPluginCallbacks
 {
