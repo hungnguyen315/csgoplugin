@@ -2,11 +2,7 @@
 
 void PlayerSayEvent::FireGameEvent(IGameEvent *event)
 {
-	const char *text = event->GetString("text");
-	if (strcmp(text, "!test") == 0)
-	{
-		
-	}
+	
 }
 
 int PlayerSayEvent::GetEventDebugID()

@@ -2,6 +2,7 @@
 #include "sys/mman.h"
 #include "eiface.h"
 #include "edict.h"
+#include "stdint.h"
 
 class CBasePlayer;
 class CBaseCombatWeapon;
