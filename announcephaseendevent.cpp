@@ -9,6 +9,8 @@ extern IVEngineServer *vEngineServer;
 
 extern int m_fFlags_off;
 
+class CBasePlayer;
+
 void AnnouncePhaseEndEvent::FireGameEvent(IGameEvent *event)
 {
 	MRecipientFilter filter;
