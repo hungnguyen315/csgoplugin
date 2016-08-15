@@ -33,11 +33,11 @@ void PlayerSpawnedEvent::FireGameEvent(IGameEvent *event)
 		
 		if (*flags & FL_CLIENT)
 		{
-			CCSUsrMsg_HudText *msg = (CCSUsrMsg_HudText *)g_Cstrike15UsermessageHelpers.GetPrototype(CS_UM_HudText)->New();
+			CCSUsrMsg_HintText *msg = (CCSUsrMsg_HintText *)g_Cstrike15UsermessageHelpers.GetPrototype(CS_UM_HintText)->New();
 			msg->set_text("Welcome to my server. Hope you have a good day. Good luck and have fun!");
 			MRecipientFilter filter;
 			filter.AddRecipient(i);
-			vEngineServer->SendUserMessage(static_cast<IRecipientFilter &>(filter), CS_UM_HudText, *msg);
+			vEngineServer->SendUserMessage(static_cast<IRecipientFilter &>(filter), CS_UM_HintText, *msg);
 			delete msg;
 			Msg("Event fired.\n");
 			break;
