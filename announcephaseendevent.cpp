@@ -6,6 +6,7 @@
 
 extern CGlobalVars *globalVars;
 extern IVEngineServer *vEngineServer;
+extern IServerGameEnts *serverGameEnts;
 
 extern int m_fFlags_off;
 
@@ -20,7 +21,7 @@ void AnnouncePhaseEndEvent::FireGameEvent(IGameEvent *event)
 		if (!edict || edict->IsFree())
 			continue;
 		
-		CBasePlayer *player = (CBasePlayer *)vEngineServer->EdictToBaseEntity(edict);
+		CBasePlayer *player = (CBasePlayer *)serverGameEnts->EdictToBaseEntity(edict);
 		if (!player)
 			continue;
 		
