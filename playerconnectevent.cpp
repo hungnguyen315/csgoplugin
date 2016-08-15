@@ -41,9 +41,9 @@ void PlayerConnectEvent::FireGameEvent(IGameEvent *event)
 		intptr_t vtable = *(intptr_t *)player;
 		intptr_t entry = vtable + sizeof(intptr_t) * 287;
 		intptr_t original = *(intptr_t *)entry;
-		mprotect(pageof(entry), pagesize, PROT_READ|PROT_WRITE|PROT_EXEC);
+		mprotect(pageof((void *)entry), pagesize, PROT_READ|PROT_WRITE|PROT_EXEC);
 		*((intptr_t*)entry) = (intptr_t)Hook_Weapon_CanSwitchTo;
-		mprotect(pageof(entry), pagesize, PROT_READ|PROT_EXEC);
+		mprotect(pageof((void *)entry), pagesize, PROT_READ|PROT_EXEC);
 		
 		/*void **base = *(void ***)player;
 		uint32_t addressofcall = (uint32_t)base[287];
