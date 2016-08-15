@@ -2,6 +2,15 @@
 #include "cstrike15_usermessage_helpers.h"
 #include "mrecipientfilter.h"
 
+#include "playerdeathevent.h"
+#include "playersayevent.h"
+#include "playerconnectevent.h"
+#include "playerdisconnectevent.h"
+#include "roundstartevent.h"
+#include "itempickupevent.h"
+#include "playerspawnevent.h"
+#include "playerspawnedevent.h"
+
 IVEngineServer *vEngineServer = NULL;
 IPlayerInfoManager *playerInfoManager = NULL;
 IGameEventManager2 *gameEventManager2 = NULL;

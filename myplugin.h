@@ -9,14 +9,6 @@
 #include "server_class.h"
 #include "dt_send.h"
 
-#include "playerdeathevent.h"
-#include "playersayevent.h"
-#include "playerconnectevent.h"
-#include "playerdisconnectevent.h"
-#include "roundstartevent.h"
-#include "itempickupevent.h"
-#include "playerspawnevent.h"
-
 class MyPlugin : public IServerPluginCallbacks
 {
 public:
