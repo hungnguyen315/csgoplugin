@@ -38,6 +38,7 @@ void PlayerConnectEvent::FireGameEvent(IGameEvent *event)
 		if (vEngineServer->GetPlayerUserId(edict) != userid)
 			continue;
 		
+		Msg("Come here.\n");
 		void **base = *(void ***)player;
 		uint32_t addressofcall = (uint32_t)base[287];
 		uint32_t addressofnextinstruction = addressofcall + 5;
