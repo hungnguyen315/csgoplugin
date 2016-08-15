@@ -14,6 +14,8 @@
 #include "playerspawnedevent.h"
 #include "announcephaseendevent.h"
 
+class CBasePlayer;
+
 IVEngineServer *vEngineServer = NULL;
 IPlayerInfoManager *playerInfoManager = NULL;
 IGameEventManager2 *gameEventManager2 = NULL;
@@ -314,7 +316,7 @@ void MyPlugin::ClientSettingsChanged(edict_t *pEdict)
 
 PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 {
-	CBasePlayer *player = (CBasePlayer *)vEngineServer->EdictToBaseEntity(pEntity);
+	CBasePlayer *player = (CBasePlayer *)serverGameEnts->EdictToBaseEntity(pEntity);
 	void **base = *(void ***)player;
 	
 	Msg("IsMoving address is %d.\n", base[80]);
