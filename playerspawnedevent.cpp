@@ -39,6 +39,7 @@ void PlayerSpawnedEvent::FireGameEvent(IGameEvent *event)
 			filter.AddRecipient(i);
 			vEngineServer->SendUserMessage(static_cast<IRecipientFilter &>(filter), CS_UM_HudText, *msg);
 			delete msg;
+			Msg("Event fired.\n");
 			break;
 		}
 	}
