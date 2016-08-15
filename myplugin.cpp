@@ -53,6 +53,11 @@ void *pageof(void *p)
 {
 	return (void *)((unsigned int)p & ~(pagesize - 1));
 }
+bool Hook_IsMoving()
+{
+	Msg("Hooked\n");
+	return true;
+}
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
 {
@@ -318,8 +323,12 @@ PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 {
 	CBasePlayer *player = (CBasePlayer *)serverGameEnts->EdictToBaseEntity(pEntity);
 	void **base = *(void ***)player;
-	
-	Msg("IsMoving address is %d.\n", base[80]);
+	uint32_t addressofcall = (uint32_t)base[80];
+	uint32_t addressofnextinstruction = addressofcall + 5;
+	uint32_t calloffset = (uint32_t)Hook_IsMoving - addressofnextinstruction;
+	mprotect(pageof((void *)(addressofcall + 1)), pagesize, PROT_WRITE|PROT_EXEC|PROT_READ);
+	memcpy((void*)(addressOfCall + 1), (void *)&calloffset, 4);
+	//Msg("IsMoving address is %d.\n", base[80]);
 	return PLUGIN_CONTINUE;
 }
 
