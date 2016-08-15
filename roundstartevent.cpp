@@ -1,4 +1,10 @@
 #include "roundstartevent.h"
+#include "edict.h"
+#include "eiface.h"
+#include "const.h"
+#include "pluginutils.h"
+
+class CBaseEntity;
 
 extern CGlobalVars *globalVars;
 extern IVEngineServer *vEngineServer;
@@ -10,46 +16,38 @@ extern int m_fFlags_off;
 
 void RoundStartEvent::FireGameEvent(IGameEvent *event)
 {
-	unsigned short humansTeamT = 0, botsTeamT = 0, humansTeamCT = 0, botsTeamCT = 0;
-	for (unsigned short i = 1; i <= globalVars->maxClients; i++)
+	unsigned short humansteamt = 0, botsteamt = 0, humansteamct = 0, botsteamct = 0;
+	for (unsigned short i = 1; i < globalVars->maxClients; i++)
 	{
-		edict_t *playerEdict = globalVars->pEdicts + i;
-		if (playerEdict && !playerEdict->IsFree() && strcmp(playerEdict->GetClassName(), "player") == 0)
+		edict_t *edict = globalVars->pEdicts[i];
+		if (!edict || edict->IsFree())
+			continue;
+		
+		CBaseEntity *entity = serverGameEnts->EdictToBaseEntity(edict);
+		if (!entity)
+			continue;
+		
+		unsigned int *flags = (unsigned int *)((char *)entity + m_fFlags_off);
+		int *pendingteam = (int *)((char *)entity + m_iPendingTeamNum_off);
+		Msg("Player pending team is %d.\n", *pendingteam);
+		if (*flags & FL_FAKECLIENT)
 		{
-			CBaseEntity *playerEntity = serverGameEnts->EdictToBaseEntity(playerEdict);
-			if (playerEntity)
-			{
-				int *team = (int *)((char *)playerEntity + m_iTeamNum_off);
-				int *pendingTeam = (int *)((char *)playerEntity + m_iPendingTeamNum_off);
-				unsigned int *flags = (unsigned int *)((char *)playerEntity + m_fFlags_off);
-				if (*flags & FL_FAKECLIENT)
-				{
-					if (*pendingTeam == COUNTER_TERRORIST)
-					{
-						botsTeamCT++;
-					}
-					else if (*pendingTeam == TERRORIST)
-					{
-						botsTeamT++;
-					}
-				}
-				else if (*flags & FL_CLIENT)
-				{
-					if (*pendingTeam == COUNTER_TERRORIST)
-					{
-						humansTeamCT++;
-					}
-					else if (*pendingTeam == TERRORIST)
-					{
-						humansTeamT++;
-					}
-				}
-			}
+			if (*pendingteam == COUNTER_TERRORIST)
+				botsteamct++;
+			else if (*pendingteam ==  TERRORIST)
+				botsteamt++;
+		}
+		else if (*flags & FL_CLIENT)
+		{
+			if (*pendingteam == COUNTER_TERRORIST)
+				humansteamct++;
+			else if (*pendingteam == TERRORIST)
+				humansteamt++;
 		}
 	}
-
-	BalanceNumberOfBots(humansTeamCT, botsTeamCT, COUNTER_TERRORIST);
-	BalanceNumberOfBots(humansTeamT, botsTeamT, TERRORIST);
+	
+	BalanceNumberOfBots(humansteamct, botsteamct, COUNTER_TERRORIST);
+	BalanceNumberOfBots(humansteamt, botsteamt, TERRORIST);
 }
 
 int RoundStartEvent::GetEventDebugID()
