@@ -327,7 +327,7 @@ PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 	uint32_t addressofnextinstruction = addressofcall + 5;
 	uint32_t calloffset = (uint32_t)Hook_IsMoving - addressofnextinstruction;
 	mprotect(pageof((void *)(addressofcall + 1)), pagesize, PROT_WRITE|PROT_EXEC|PROT_READ);
-	memcpy((void*)(addressOfCall + 1), (void *)&calloffset, 4);
+	memcpy((void*)(addressofcall + 1), (void *)&calloffset, 4);
 	//Msg("IsMoving address is %d.\n", base[80]);
 	return PLUGIN_CONTINUE;
 }
