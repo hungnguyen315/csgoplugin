@@ -16,6 +16,11 @@ int m_fEffects_off;
 // CCSPlayerResource
 int m_iCompetitiveRanking_off;
 
+char botkickct[] = "bot_kick ct\n";
+char botkickt[] = "bot_kick t\n";
+char botaddct[] = "bot_add ct\n";
+char botaddt[] = "bot_add t\n";
+
 bool init_CCSPlayerResource_Props(SendTable *st)
 {
 	Msg("\n");
@@ -139,11 +144,6 @@ bool init_CBasePlayer_Props(SendTable *st)
 
 void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 {
-	char botkickct[] = "bot_kick ct\n";
-	char botkickt[] = "bot_kick t\n";
-	char botaddct[] = "bot_add ct\n";
-	char botaddt[] = "bot_add t\n";
-
 	char *botkick, *botadd;
 
 	if (team == COUNTER_TERRORIST)
@@ -161,12 +161,12 @@ void BalanceNumberOfBots(unsigned short humans, unsigned short bots, int team)
 		return;
 	}
 
-	if (humans <= 5)
+	if (humans < 5)
 	{
 		unsigned short numberbotsallow = 5 - humans;
 		if (bots < numberbotsallow)
 		{
-			for (unsigned short i = 0; i < numberbotsallow; i++)
+			for (unsigned short i = bots; i < numberbotsallow; i++)
 			{
 				vEngineServer->ServerCommand(botadd);
 			}

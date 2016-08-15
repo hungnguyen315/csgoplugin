@@ -29,7 +29,6 @@ void RoundStartEvent::FireGameEvent(IGameEvent *event)
 		
 		unsigned int *flags = (unsigned int *)((char *)entity + m_fFlags_off);
 		int *pendingteam = (int *)((char *)entity + m_iPendingTeamNum_off);
-		Msg("Player pending team is %d.\n", *pendingteam);
 		if (*flags & FL_FAKECLIENT)
 		{
 			if (*pendingteam == COUNTER_TERRORIST)
