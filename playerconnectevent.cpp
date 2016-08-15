@@ -14,7 +14,7 @@ extern int pagesize;
 
 void *pageof(void *p)
 {
-	return (void *)((unsigned int)p & ~(pagesize - 1));
+	return (void *)((intptr_t)p & ~(pagesize - 1));
 }
 bool Hook_Weapon_CanSwitchTo(CBaseCombatWeapon *weapon)
 {
@@ -38,13 +38,19 @@ void PlayerConnectEvent::FireGameEvent(IGameEvent *event)
 		if (vEngineServer->GetPlayerUserId(edict) != userid)
 			continue;
 		
-		Msg("Come here.\n");
-		void **base = *(void ***)player;
+		intptr_t vtable = *(intptr_t *)player;
+		intptr_t entry = vtable + sizeof(intptr_t) * 287;
+		intptr_t original = *(intptr_t *)entry;
+		mprotect(pageof(entry), pagesize, PROT_READ|PROT_WRITE|PROT_EXEC);
+		*((intptr_t*)entry) = (intptr_t)Hook_Weapon_CanSwitchTo;
+		mprotect(pageof(entry), pagesize, PROT_READ|PROT_EXEC);
+		
+		/*void **base = *(void ***)player;
 		uint32_t addressofcall = (uint32_t)base[287];
 		uint32_t addressofnextinstruction = addressofcall + 5;
 		uint32_t calloffset = (uint32_t)Hook_Weapon_CanSwitchTo - addressofnextinstruction;
 		mprotect(pageof((void *)(addressofcall + 1)), pagesize, PROT_WRITE|PROT_EXEC|PROT_READ);
-		memcpy((void*)(addressofcall + 1), (void *)&calloffset, 4);
+		memcpy((void*)(addressofcall + 1), (void *)&calloffset, 4);*/
 	}
 }
 
