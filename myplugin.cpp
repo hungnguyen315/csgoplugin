@@ -224,8 +224,8 @@ const char *MyPlugin::GetPluginDescription()
 void MyPlugin::LevelInit(char const *pMapName)
 {
 	gameEventManager2->AddListener(playerDeathEvent, "player_death", true);
-	gameEventManager2->AddListener(playerSayEvent, "player_say", true);
-	gameEventManager2->AddListener(playerConnectEvent, "player_connect", true);
+	//gameEventManager2->AddListener(playerSayEvent, "player_say", true);
+	gameEventManager2->AddListener(playerConnectEvent, "player_say", true);
 	gameEventManager2->AddListener(playerDisconnectEvent, "player_disconnect", true);
 	gameEventManager2->AddListener(roundStartEvent, "round_start", true);
 	gameEventManager2->AddListener(itemPickupEvent, "item_pickup", true);
