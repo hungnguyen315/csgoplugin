@@ -19,7 +19,7 @@ void RoundStartEvent::FireGameEvent(IGameEvent *event)
 	unsigned short humansteamt = 0, botsteamt = 0, humansteamct = 0, botsteamct = 0;
 	for (unsigned short i = 1; i < globalVars->maxClients; i++)
 	{
-		edict_t *edict = globalVars->pEdicts[i];
+		edict_t *edict = globalVars->pEdicts + i;
 		if (!edict || edict->IsFree())
 			continue;
 		
