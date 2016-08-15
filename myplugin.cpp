@@ -310,7 +310,6 @@ void MyPlugin::ClientSettingsChanged(edict_t *pEdict)
 
 PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 {
-	CBasePlayer *player = (CBasePlayer *)serverGameEnts->EdictToBaseEntity(pEntity);
 	return PLUGIN_CONTINUE;
 }
 
