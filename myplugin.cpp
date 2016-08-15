@@ -1,6 +1,4 @@
 #include "myplugin.h"
-#include "cstrike15_usermessage_helpers.h"
-#include "mrecipientfilter.h"
 #include "server_class.h"
 #include "dt_send.h"
 
@@ -12,6 +10,7 @@
 #include "itempickupevent.h"
 #include "playerspawnevent.h"
 #include "playerspawnedevent.h"
+#include "announcephaseendevent.h"
 
 IVEngineServer *vEngineServer = NULL;
 IPlayerInfoManager *playerInfoManager = NULL;
@@ -21,6 +20,7 @@ CGlobalVars *globalVars = NULL;
 IServerTools *serverTools = NULL;
 IServerPluginHelpers *serverPluginHelpers = NULL;
 IServerGameDLL *serverGameDLL = NULL;
+AnnouncePhaseEndEvent *announphaseendevent = NULL;
 
 // CBaseEntity
 int m_iTeamNum_off;
@@ -175,6 +175,7 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 	itemPickupEvent = new ItemPickupEvent();
 	playerSpawnEvent = new PlayerSpawnEvent();
 	playerSpawnedEvent = new PlayerSpawnedEvent();
+	announphaseendevent = new AnnouncePhaseEndEvent();
 
 	return true;
 }
@@ -197,6 +198,8 @@ void MyPlugin::Unload()
 	delete playerSpawnEvent;
 	gameEventManager2->RemoveListener(playerSpawnedEvent);
 	delete playerSpawnedEvent;
+	gameEventManager2->RemoveListener(announphaseendevent);
+	delete announphaseendevent;
 }
 
 void MyPlugin::Pause()
@@ -224,6 +227,7 @@ void MyPlugin::LevelInit(char const *pMapName)
 	gameEventManager2->AddListener(itemPickupEvent, "item_pickup", true);
 	gameEventManager2->AddListener(playerSpawnEvent, "player_spawn", true);
 	gameEventManager2->AddListener(playerSpawnedEvent, "player_spawned", true);
+	gameEventManager2->AddListener(announphaseendevent, "announce_phase_end", true);
 }
 
 void MyPlugin::ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
@@ -246,6 +250,7 @@ void MyPlugin::LevelShutdown()
 	gameEventManager2->RemoveListener(itemPickupEvent);
 	gameEventManager2->RemoveListener(playerSpawnEvent);
 	gameEventManager2->RemoveListener(playerSpawnedEvent);
+	gameEventManager2->RemoveListener(announphaseendevent);
 }
 
 void MyPlugin::OnQueryCvarValueFinished(QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue)

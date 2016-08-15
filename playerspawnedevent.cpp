@@ -11,6 +11,8 @@ extern IServerGameEnts *serverGameEnts;
 
 extern int m_fFlags_off;
 
+class CBasePlayer;
+
 void PlayerSpawnedEvent::FireGameEvent(IGameEvent *event)
 {
 	int userid = event->GetInt("userid");
@@ -20,14 +22,14 @@ void PlayerSpawnedEvent::FireGameEvent(IGameEvent *event)
 		if (!edict || edict->IsFree())
 			continue;
 		
-		CBaseEntity *entity = serverGameEnts->EdictToBaseEntity(edict);
-		if (!entity)
+		CBasePlayer *player = (CBasePlayer *)serverGameEnts->EdictToBaseEntity(edict);
+		if (!player)
 			continue;
 		
 		if (vEngineServer->GetPlayerUserId(edict) != userid)
 			continue;
 		
-		unsigned int *flags = (unsigned int *)((char *)entity + m_fFlags_off);
+		unsigned int *flags = (unsigned int *)((char *)player + m_fFlags_off);
 		if (*flags & FL_FAKECLIENT)
 			continue;
 		
