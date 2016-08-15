@@ -47,6 +47,10 @@ PlayerSpawnEvent *playerSpawnEvent = NULL;
 PlayerSpawnedEvent *playerSpawnedEvent = NULL;
 
 int pagesize = sysconf(_SC_PAGESIZE);
+void *pageof(void *p)
+{
+	return (void *)((unsigned int)p & ~(pagesize - 1));
+}
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
 {
@@ -310,7 +314,10 @@ void MyPlugin::ClientSettingsChanged(edict_t *pEdict)
 
 PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 {
-	Msg("Page size is %d.\n", pagesize);
+	CBasePlayer *player = (CBasePlayer *)vEngineServer->EdictToBaseEntity(pEntity);
+	void **base = *(void ***)player;
+	
+	Msg("IsMoving address is %d.\n", base[80]);
 	return PLUGIN_CONTINUE;
 }
 
