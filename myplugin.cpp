@@ -61,7 +61,7 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 				{
 					SendProp *sp = st->GetProp(i);
 					const char *propname = sp->GetName();
-					Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propName, sp->GetOffset(), sp->GetType(), sp->IsSigned());
+					Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propname, sp->GetOffset(), sp->GetType(), sp->IsSigned());
 					
 					if (strcmp(propname, "m_fFlags") == 0)
 					{
@@ -84,7 +84,7 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 				{
 					SendProp *sp = st->GetProp(i);
 					const char *propname = sp->GetName();
-					Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propName, sp->GetOffset(), sp->GetType(), sp->IsSigned());
+					Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propname, sp->GetOffset(), sp->GetType(), sp->IsSigned());
 					
 					if (strcmp(propname, "m_iTeamNum") == 0)
 					{
