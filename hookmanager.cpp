@@ -1,5 +1,6 @@
 #include "hookmanager.h"
 #include "stdint.h"
+#include "unistd.h"
 #include "sys/mman.h"
 
 int pagesize = sysconf(_SC_PAGE_SIZE);
