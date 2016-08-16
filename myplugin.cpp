@@ -60,7 +60,7 @@ void MyPlugin::ClientActive(edict_t *pEntity)
 	if (!player)
 		return;
 	
-	AddHook((void *)player, Hook_Weapon_CanUse, 281);
+	AddHook((void *)player, (void *)Hook_Weapon_CanUse, 281);
 }
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
