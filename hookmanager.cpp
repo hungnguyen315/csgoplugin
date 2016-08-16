@@ -12,7 +12,7 @@ void *AddHook(void *instance, void *hook, int offset)
 	intptr_t entry = vtable + sizeof(intptr_t) * offset;
 	intptr_t original = *(intptr_t *)entry;
 	mprotect((void *)(entry & pagemask), pagesize, PROT_READ|PROT_WRITE|PROT_EXEC);
-	*entry = (intptr_t)hook;
+	*(intptr_t *)entry = (intptr_t)hook;
 	mprotect((void *)(entry & pagemask), pagesize, PROT_READ|PROT_EXEC);
-	return original;
+	return (void *)original;
 }
