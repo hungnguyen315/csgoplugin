@@ -60,8 +60,7 @@ void MyPlugin::ClientActive(edict_t *pEntity)
 	if (!player)
 		return;
 	
-	HookFunctions *hk = new HookFunctions();
-	hk->org_Weapon_CanUse = (fn_Weapon_CanUse)AddHook((void *)player, (void *)hk->Hook_Weapon_CanUse, 281);
+	hk->org_Weapon_CanUse = (fn_Weapon_CanUse)AddHook((void *)player, Hook_Weapon_CanUse, 281);
 }
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
