@@ -65,9 +65,9 @@ all: $(OBJS)
 	ln -sf $(HL2SDK_DIR)/lib/linux/interfaces_i486.a interfaces_i486.a
 	ln -sf $(HL2SDK_DIR)/lib/linux/mathlib_i486.a mathlib_i486.a
 	ln -sf $(HL2SDK_DIR)/lib/linux32/release/libprotobuf.a libprotobuf.a
-	#$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) $(HL2SDK_DIR)/public/game/shared/csgo/protobuf/cstrike15_usermessage_helpers.cpp -o cstrike15_usermessage_helpers.o
-	#$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) $(HL2SDK_DIR)/public/engine/protobuf/netmessages.pb.cc -o netmessages.o
-	#$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) $(HL2SDK_DIR)/public/game/shared/csgo/protobuf/cstrike15_usermessages.pb.cc -o cstrike15_usermessages.o
+	$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) $(HL2SDK_DIR)/public/game/shared/csgo/protobuf/cstrike15_usermessage_helpers.cpp -o cstrike15_usermessage_helpers.o
+	$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) $(HL2SDK_DIR)/public/engine/protobuf/netmessages.pb.cc -o netmessages.o
+	$(CC) -m32 -std=c++11 -c $(INCLUDES) $(CFLAGS) $(HL2SDK_DIR)/public/game/shared/csgo/protobuf/cstrike15_usermessages.pb.cc -o cstrike15_usermessages.o
 	$(CC) $(INCLUDES) $(OBJS) cstrike15_usermessage_helpers.o netmessages.o cstrike15_usermessages.o $(LINK) -o myplugin.so
 	cp myplugin.so /home/steam/steamcmd/csgods/csgo/addons
 
