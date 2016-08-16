@@ -24,7 +24,7 @@ bool Hook_Weapon_CanUse(CBaseCombatWeapon *pWeapon)
 
 void PlayerConnectEvent::FireGameEvent(IGameEvent *event)
 {
-	int userid = event->GetInt("userid");
+	/*int userid = event->GetInt("userid");
 	for (int i = 1; i <= globalVars->maxClients; i++)
 	{
 		edict_t *edict = globalVars->pEdicts + i;
@@ -44,7 +44,7 @@ void PlayerConnectEvent::FireGameEvent(IGameEvent *event)
 		mprotect(pageof((void *)entry), pagesize, PROT_READ|PROT_WRITE|PROT_EXEC);
 		*((intptr_t*)entry) = (intptr_t)Hook_Weapon_CanUse;
 		mprotect(pageof((void *)entry), pagesize, PROT_READ|PROT_EXEC);
-	}
+	}*/
 }
 
 int PlayerConnectEvent::GetEventDebugID()

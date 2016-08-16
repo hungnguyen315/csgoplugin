@@ -14,6 +14,9 @@
 #include "playerspawnedevent.h"
 #include "announcephaseendevent.h"
 
+#include "hookmanager.h"
+#include "hookfunctions.h"
+
 IVEngineServer *vEngineServer = NULL;
 IPlayerInfoManager *playerInfoManager = NULL;
 IGameEventManager2 *gameEventManager2 = NULL;
@@ -46,7 +49,18 @@ ItemPickupEvent *itemPickupEvent = NULL;
 PlayerSpawnEvent *playerSpawnEvent = NULL;
 PlayerSpawnedEvent *playerSpawnedEvent = NULL;
 
-int pagesize = sysconf(_SC_PAGESIZE);
+void MyPlugin::ClientActive(edict_t *pEntity)
+{
+	if (!pEntity || pEntity->IsFree())
+		return;
+	
+	CBasePlayer *player = (CBasePlayer *)serverGameEnts->EdictToBaseEntity(pEntity);
+	if (!player)
+		return;
+	
+	HookFunctions hk = new HookFunctions();
+	hk->org_Weapon_CanUse = (fn_Weapon_CanUse)AddHook((void *)player, (void *)hk->Hook_Weapon_CanUse, 281);
+}
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
 {
@@ -224,8 +238,8 @@ const char *MyPlugin::GetPluginDescription()
 void MyPlugin::LevelInit(char const *pMapName)
 {
 	gameEventManager2->AddListener(playerDeathEvent, "player_death", true);
-	//gameEventManager2->AddListener(playerSayEvent, "player_say", true);
-	gameEventManager2->AddListener(playerConnectEvent, "player_say", true);
+	gameEventManager2->AddListener(playerSayEvent, "player_say", true);
+	gameEventManager2->AddListener(playerConnectEvent, "player_connect", true);
 	gameEventManager2->AddListener(playerDisconnectEvent, "player_disconnect", true);
 	gameEventManager2->AddListener(roundStartEvent, "round_start", true);
 	gameEventManager2->AddListener(itemPickupEvent, "item_pickup", true);
@@ -264,7 +278,7 @@ void MyPlugin::OnQueryCvarValueFinished(QueryCvarCookie_t iCookie, edict_t *pPla
 
 void MyPlugin::OnEdictAllocated(edict_t *edict)
 {
-	Msg("Classname is %s\n", edict->GetClassName());
+	
 }
 
 void MyPlugin::OnEdictFreed(const edict_t *edict)
@@ -284,11 +298,6 @@ void MyPlugin::ClientFullyConnect(edict_t *pEntity)
 }
 
 void MyPlugin::ClientPutInServer(edict_t *entity, const char *playername)
-{
-
-}
-
-void MyPlugin::ClientActive(edict_t *pEntity)
 {
 
 }
