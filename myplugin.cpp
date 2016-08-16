@@ -17,6 +17,8 @@
 #include "hookmanager.h"
 #include "hookfunctions.h"
 
+class CBasePlayer;
+
 IVEngineServer *vEngineServer = NULL;
 IPlayerInfoManager *playerInfoManager = NULL;
 IGameEventManager2 *gameEventManager2 = NULL;
@@ -58,7 +60,7 @@ void MyPlugin::ClientActive(edict_t *pEntity)
 	if (!player)
 		return;
 	
-	HookFunctions hk = new HookFunctions();
+	HookFunctions *hk = new HookFunctions();
 	hk->org_Weapon_CanUse = (fn_Weapon_CanUse)AddHook((void *)player, (void *)hk->Hook_Weapon_CanUse, 281);
 }
 
