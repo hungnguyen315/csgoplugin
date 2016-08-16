@@ -44,13 +44,6 @@ void PlayerConnectEvent::FireGameEvent(IGameEvent *event)
 		mprotect(pageof((void *)entry), pagesize, PROT_READ|PROT_WRITE|PROT_EXEC);
 		*((intptr_t*)entry) = (intptr_t)Hook_Weapon_CanUse;
 		mprotect(pageof((void *)entry), pagesize, PROT_READ|PROT_EXEC);
-		
-		/*void **base = *(void ***)player;
-		uint32_t addressofcall = (uint32_t)base[287];
-		uint32_t addressofnextinstruction = addressofcall + 5;
-		uint32_t calloffset = (uint32_t)Hook_Weapon_CanSwitchTo - addressofnextinstruction;
-		mprotect(pageof((void *)(addressofcall + 1)), pagesize, PROT_WRITE|PROT_EXEC|PROT_READ);
-		memcpy((void*)(addressofcall + 1), (void *)&calloffset, 4);*/
 	}
 }
 

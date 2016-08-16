@@ -264,7 +264,7 @@ void MyPlugin::OnQueryCvarValueFinished(QueryCvarCookie_t iCookie, edict_t *pPla
 
 void MyPlugin::OnEdictAllocated(edict_t *edict)
 {
-	
+	Msg("Classname is %s\n", edict->GetClassName());
 }
 
 void MyPlugin::OnEdictFreed(const edict_t *edict)
