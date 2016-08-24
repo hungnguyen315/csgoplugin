@@ -27,7 +27,7 @@ CGlobalVars *globalVars = NULL;
 IServerTools *serverTools = NULL;
 IServerPluginHelpers *serverPluginHelpers = NULL;
 IServerGameDLL *serverGameDLL = NULL;
-AnnouncePhaseEndEvent *announphaseendevent = NULL;
+ICvar *g_pCVar = NULL;
 
 // CBaseEntity
 int m_iTeamNum_off;
@@ -50,17 +50,12 @@ RoundStartEvent *roundStartEvent = NULL;
 ItemPickupEvent *itemPickupEvent = NULL;
 PlayerSpawnEvent *playerSpawnEvent = NULL;
 PlayerSpawnedEvent *playerSpawnedEvent = NULL;
+AnnouncePhaseEndEvent *announphaseendevent = NULL;
 
+void ClientPrint(edict_t *pEdict, char *format, ...);
 void MyPlugin::ClientActive(edict_t *pEntity)
 {
-	if (!pEntity || pEntity->IsFree())
-		return;
 	
-	CBasePlayer *player = (CBasePlayer *)serverGameEnts->EdictToBaseEntity(pEntity);
-	if (!player)
-		return;
-	
-	AddHook((void *)player, (void *)Hook_Weapon_CanUse, 281);
 }
 
 bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
@@ -72,7 +67,7 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 		while (svrclass)
 		{
 			const char *classname = svrclass->GetName();
-			Msg("[%s]\n", classname);
+			Msg("[%s %d]\n", classname, svrclass->m_InstanceBaselineIndex);
 			if (strcmp(classname, "CBasePlayer") == 0)
 			{
 				SendTable *st = svrclass->m_pTable;
@@ -131,6 +126,16 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 				}
 			}
 			
+			if (strcmp(classname, "CBaseCombatWeapon") == 0)
+			{
+				SendTable *st = svrclass->m_pTable;
+				for (int i = 0; i < st->m_nProps; i++)
+				{
+					SendProp *sp = st->GetProp(i);
+					const char *propname = sp->GetName();
+					Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propname, sp->GetOffset(), sp->GetType(), sp->IsSigned());
+				}
+			}
 			svrclass = svrclass->m_pNext;
 		}
 	}
@@ -157,7 +162,31 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 		Warning("Unable to load IPlayerInfoManager.\n");
 		return false;
 	}
+	
+	g_pCVar = (ICvar *)interfaceFactory(CVAR_INTERFACE_VERSION, NULL);
+	if (g_pCVar)
+	{
+		ICvar::Iterator iter(g_pCVar);
+		for (iter.SetFirst(); iter.IsValid(); iter.Next())
+		{
+			ConCommandBase *cmd = iter.Get();
+			if (cmd->IsCommand())
+				continue;
+			const char *cmdname = cmd->GetName();
+			ConVar *cvar = (ConVar *)cmd;
+			if (strcmp(cmdname, "net_maxcleartime") == 0)
+				cvar->SetValue(0.001f);
 
+			/*if (strcmp(cmdname, "net_minroutable") == 0)
+				cvar->SetValue(1000);*/
+		}
+	}
+	else
+	{
+		Warning("Unable to load ICVar.\n");
+		return false;
+	}
+	
 	gameEventManager2 = (IGameEventManager2 *)interfaceFactory(INTERFACEVERSION_GAMEEVENTSMANAGER2, NULL);
 	if (!gameEventManager2)
 	{
@@ -186,40 +215,41 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 		return false;
 	}
 
-	playerDeathEvent = new PlayerDeathEvent();
-	playerSayEvent = new PlayerSayEvent();
-	playerConnectEvent = new PlayerConnectEvent();
-	playerDisconnectEvent = new PlayerDisconnectEvent();
+	//playerDeathEvent = new PlayerDeathEvent();
+	//playerSayEvent = new PlayerSayEvent();
+	//playerConnectEvent = new PlayerConnectEvent();
+	//playerDisconnectEvent = new PlayerDisconnectEvent();
 	roundStartEvent = new RoundStartEvent();
-	itemPickupEvent = new ItemPickupEvent();
-	playerSpawnEvent = new PlayerSpawnEvent();
-	playerSpawnedEvent = new PlayerSpawnedEvent();
-	announphaseendevent = new AnnouncePhaseEndEvent();
+	//itemPickupEvent = new ItemPickupEvent();
+	//playerSpawnEvent = new PlayerSpawnEvent();
+	//playerSpawnedEvent = new PlayerSpawnedEvent();
+	//announphaseendevent = new AnnouncePhaseEndEvent();
 
 	return true;
 }
 
 void MyPlugin::Unload()
 {
-	gameEventManager2->RemoveListener(playerDeathEvent);
-	delete playerDeathEvent;
-	gameEventManager2->RemoveListener(playerSayEvent);
-	delete playerSayEvent;
-	gameEventManager2->RemoveListener(playerConnectEvent);
-	delete playerConnectEvent;
-	gameEventManager2->RemoveListener(playerDisconnectEvent);
-	delete playerDisconnectEvent;
+	//gameEventManager2->RemoveListener(playerDeathEvent);
+	//delete playerDeathEvent;
+	//gameEventManager2->RemoveListener(playerSayEvent);
+	//delete playerSayEvent;
+	//gameEventManager2->RemoveListener(playerConnectEvent);
+	//delete playerConnectEvent;
+	//gameEventManager2->RemoveListener(playerDisconnectEvent);
+	//delete playerDisconnectEvent;
 	gameEventManager2->RemoveListener(roundStartEvent);
 	delete roundStartEvent;
-	gameEventManager2->RemoveListener(itemPickupEvent);
-	delete itemPickupEvent;
-	gameEventManager2->RemoveListener(playerSpawnEvent);
-	delete playerSpawnEvent;
-	gameEventManager2->RemoveListener(playerSpawnedEvent);
-	delete playerSpawnedEvent;
-	gameEventManager2->RemoveListener(announphaseendevent);
-	delete announphaseendevent;
+	//gameEventManager2->RemoveListener(itemPickupEvent);
+	//delete itemPickupEvent;
+	//gameEventManager2->RemoveListener(playerSpawnEvent);
+	//delete playerSpawnEvent;
+	//gameEventManager2->RemoveListener(playerSpawnedEvent);
+	//delete playerSpawnedEvent;
+	//gameEventManager2->RemoveListener(announphaseendevent);
+	//delete announphaseendevent;
 }
+
 
 void MyPlugin::Pause()
 {
@@ -238,15 +268,15 @@ const char *MyPlugin::GetPluginDescription()
 
 void MyPlugin::LevelInit(char const *pMapName)
 {
-	gameEventManager2->AddListener(playerDeathEvent, "player_death", true);
-	gameEventManager2->AddListener(playerSayEvent, "player_say", true);
-	gameEventManager2->AddListener(playerConnectEvent, "player_connect", true);
-	gameEventManager2->AddListener(playerDisconnectEvent, "player_disconnect", true);
+	//gameEventManager2->AddListener(playerDeathEvent, "player_death", true);
+	//gameEventManager2->AddListener(playerSayEvent, "player_say", true);
+	//gameEventManager2->AddListener(playerConnectEvent, "player_connect", true);
+	//gameEventManager2->AddListener(playerDisconnectEvent, "player_disconnect", true);
 	gameEventManager2->AddListener(roundStartEvent, "round_start", true);
-	gameEventManager2->AddListener(itemPickupEvent, "item_pickup", true);
-	gameEventManager2->AddListener(playerSpawnEvent, "player_spawn", true);
-	gameEventManager2->AddListener(playerSpawnedEvent, "player_spawned", true);
-	gameEventManager2->AddListener(announphaseendevent, "announce_phase_end", true);
+	//gameEventManager2->AddListener(itemPickupEvent, "item_pickup", true);
+	//gameEventManager2->AddListener(playerSpawnEvent, "player_spawn", true);
+	//gameEventManager2->AddListener(playerSpawnedEvent, "player_spawned", true);
+	//gameEventManager2->AddListener(announphaseendevent, "announce_phase_end", true);
 }
 
 void MyPlugin::ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
@@ -261,15 +291,15 @@ void MyPlugin::GameFrame(bool simulating)
 
 void MyPlugin::LevelShutdown()
 {
-	gameEventManager2->RemoveListener(playerDeathEvent);
-	gameEventManager2->RemoveListener(playerSayEvent);
-	gameEventManager2->RemoveListener(playerConnectEvent);
-	gameEventManager2->RemoveListener(playerDisconnectEvent);
+	//gameEventManager2->RemoveListener(playerDeathEvent);
+	//gameEventManager2->RemoveListener(playerSayEvent);
+	//gameEventManager2->RemoveListener(playerConnectEvent);
+	//gameEventManager2->RemoveListener(playerDisconnectEvent);
 	gameEventManager2->RemoveListener(roundStartEvent);
-	gameEventManager2->RemoveListener(itemPickupEvent);
-	gameEventManager2->RemoveListener(playerSpawnEvent);
-	gameEventManager2->RemoveListener(playerSpawnedEvent);
-	gameEventManager2->RemoveListener(announphaseendevent);
+	//gameEventManager2->RemoveListener(itemPickupEvent);
+	//gameEventManager2->RemoveListener(playerSpawnEvent);
+	//gameEventManager2->RemoveListener(playerSpawnedEvent);
+	//gameEventManager2->RemoveListener(announphaseendevent);
 }
 
 void MyPlugin::OnQueryCvarValueFinished(QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue)
@@ -320,10 +350,60 @@ void MyPlugin::ClientSettingsChanged(edict_t *pEdict)
 
 PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 {
+	if (strcmp(args[0], "/cvar") == 0 && args.ArgC() >= 2)
+	{
+		IPlayerInfo *playerinfo = playerInfoManager->GetPlayerInfo(pEntity);
+		if (!playerinfo)
+			return PLUGIN_CONTINUE;
+
+		if (strcmp(playerinfo->GetNetworkIDString(), "STEAM_1:0:102633929") != 0)
+		{
+			ClientPrint(pEntity, "You are not allowed to access this command.\n");
+			return PLUGIN_STOP;
+		}
+
+		ICvar::Iterator iter(g_pCVar);
+		for (iter.SetFirst(); iter.IsValid(); iter.Next())
+		{
+			ConCommandBase *cmd = iter.Get();
+			if (cmd->IsCommand())
+				continue;
+
+			const char *cmdname = cmd->GetName();
+			if (strcmp(cmdname, args[1]) != 0)
+				continue;
+			
+			ConVar *cvar = (ConVar *)cmd;
+			if (args.ArgC() >= 4)
+			{
+				if (strcmp(args[2], "i") == 0)
+					cvar->SetValue(atoi(args[3]));
+				else if (strcmp(args[2], "f") == 0)
+					cvar->SetValue((float)atof(args[3]));
+			}
+
+			ClientPrint(pEntity ,"%s [int: %d][float: %f][string: %s] - %s\n", cmdname, cvar->GetInt(),
+				cvar->GetFloat(), cvar->GetString(), cvar->GetHelpText());
+			return PLUGIN_STOP;
+		}
+		ClientPrint(pEntity, "Can't find convar %s.\n", args[1]);
+	}
 	return PLUGIN_CONTINUE;
 }
 
 PLUGIN_RESULT MyPlugin::NetworkIDValidated(const char *pszUserName, const char *pszNetworkID)
 {
 	return PLUGIN_CONTINUE;
+}
+
+void ClientPrint(edict_t *pEdict, char *format, ...)
+{
+	va_list		argptr;
+	static char		string[1024];
+	
+	va_start (argptr, format);
+	Q_vsnprintf(string, sizeof(string), format,argptr);
+	va_end (argptr);
+
+	vEngineServer->ClientPrintf( pEdict, string );
 }
