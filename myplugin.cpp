@@ -350,7 +350,7 @@ void MyPlugin::ClientSettingsChanged(edict_t *pEdict)
 
 PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 {
-	if (strcmp(args[0], "/cvar") == 0 && args.ArgC() >= 2)
+	/*if (strcmp(args[0], "/cvar") == 0 && args.ArgC() >= 2)
 	{
 		IPlayerInfo *playerinfo = playerInfoManager->GetPlayerInfo(pEntity);
 		if (!playerinfo)
@@ -387,7 +387,7 @@ PLUGIN_RESULT MyPlugin::ClientCommand(edict_t *pEntity, const CCommand &args)
 			return PLUGIN_STOP;
 		}
 		ClientPrint(pEntity, "Can't find convar %s.\n", args[1]);
-	}
+	}*/
 	return PLUGIN_CONTINUE;
 }
 
