@@ -2,22 +2,22 @@
 #include "server_class.h"
 #include "dt_send.h"
 
-#include "sys/mman.h"
+//#include "sys/mman.h"
 
-#include "playerdeathevent.h"
-#include "playersayevent.h"
-#include "playerconnectevent.h"
-#include "playerdisconnectevent.h"
+//#include "playerdeathevent.h"
+//#include "playersayevent.h"
+//#include "playerconnectevent.h"
+//#include "playerdisconnectevent.h"
 #include "roundstartevent.h"
-#include "itempickupevent.h"
-#include "playerspawnevent.h"
-#include "playerspawnedevent.h"
-#include "announcephaseendevent.h"
+//#include "itempickupevent.h"
+//#include "playerspawnevent.h"
+//#include "playerspawnedevent.h"
+//#include "announcephaseendevent.h"
 
-#include "hookmanager.h"
-#include "hookfunctions.h"
+//#include "hookmanager.h"
+//#include "hookfunctions.h"
 
-class CBasePlayer;
+//class CBasePlayer;
 
 IVEngineServer *vEngineServer = NULL;
 IPlayerInfoManager *playerInfoManager = NULL;
@@ -42,17 +42,17 @@ int m_fFlags_off;
 // CCSPlayerResource
 int m_iCompetitiveRanking_off;
 
-PlayerDeathEvent *playerDeathEvent = NULL;
-PlayerSayEvent *playerSayEvent = NULL;
-PlayerConnectEvent *playerConnectEvent = NULL;
-PlayerDisconnectEvent *playerDisconnectEvent = NULL;
+//PlayerDeathEvent *playerDeathEvent = NULL;
+//PlayerSayEvent *playerSayEvent = NULL;
+//PlayerConnectEvent *playerConnectEvent = NULL;
+//PlayerDisconnectEvent *playerDisconnectEvent = NULL;
 RoundStartEvent *roundStartEvent = NULL;
-ItemPickupEvent *itemPickupEvent = NULL;
-PlayerSpawnEvent *playerSpawnEvent = NULL;
-PlayerSpawnedEvent *playerSpawnedEvent = NULL;
-AnnouncePhaseEndEvent *announphaseendevent = NULL;
+//ItemPickupEvent *itemPickupEvent = NULL;
+//PlayerSpawnEvent *playerSpawnEvent = NULL;
+//PlayerSpawnedEvent *playerSpawnedEvent = NULL;
+//AnnouncePhaseEndEvent *announphaseendevent = NULL;
 
-void ClientPrint(edict_t *pEdict, char *format, ...);
+// void ClientPrint(edict_t *pEdict, char *format, ...);
 void MyPlugin::ClientActive(edict_t *pEntity)
 {
 	
@@ -67,7 +67,7 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 		while (svrclass)
 		{
 			const char *classname = svrclass->GetName();
-			Msg("[%s %d]\n", classname, svrclass->m_InstanceBaselineIndex);
+			Msg("[%s]\n", classname);
 			if (strcmp(classname, "CBasePlayer") == 0)
 			{
 				SendTable *st = svrclass->m_pTable;
@@ -126,7 +126,7 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 				}
 			}
 			
-			if (strcmp(classname, "CBaseCombatWeapon") == 0)
+			/*if (strcmp(classname, "CBaseCombatWeapon") == 0)
 			{
 				SendTable *st = svrclass->m_pTable;
 				for (int i = 0; i < st->m_nProps; i++)
@@ -135,7 +135,7 @@ bool MyPlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSe
 					const char *propname = sp->GetName();
 					Msg("Prop name: %s | Prop Offset: %d | Type: %d | IsSigned: %d\n", propname, sp->GetOffset(), sp->GetType(), sp->IsSigned());
 				}
-			}
+			}*/
 			svrclass = svrclass->m_pNext;
 		}
 	}
@@ -396,7 +396,7 @@ PLUGIN_RESULT MyPlugin::NetworkIDValidated(const char *pszUserName, const char *
 	return PLUGIN_CONTINUE;
 }
 
-void ClientPrint(edict_t *pEdict, char *format, ...)
+/*void ClientPrint(edict_t *pEdict, char *format, ...)
 {
 	va_list		argptr;
 	static char		string[1024];
@@ -406,4 +406,4 @@ void ClientPrint(edict_t *pEdict, char *format, ...)
 	va_end (argptr);
 
 	vEngineServer->ClientPrintf( pEdict, string );
-}
+}*/
